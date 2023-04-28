@@ -54,12 +54,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched.'
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/usernameParam"
       responses:
         '200':
           description: successful operation
@@ -82,12 +77,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: username
-          in: path
-          description: username that need to be updated
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/usernameParam"
       requestBody:
         description: Update an existent user in the store
         content:
@@ -111,12 +101,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/usernameParam"
       responses:
         '400':
           description: Invalid username supplied
@@ -142,6 +127,75 @@ components:
         enabled:
           type: boolean
           example: true
+        email:
+          type: string
+          example: john@yourcompany.com
+        emailVerified:
+          type: boolean
+          example: true
+        userAttributes: # e.g. a map with key value pairs: orgid=redhat, org_admin=true, is_internal=false, type=privileged
+          type: object
+          additionalProperties: true
+        clientRoles:
+          type: object
+          additionalProperties: true
+  parameters:
+    usernameParam:
+      in: path 
+      name: username
+      example: theUser
+      description: 'The username that needs to be fetched.'
+      required: true
+      schema:
+        type: string
+    userIdParam:
+      in: path 
+      name: userId
+      example: 28718e03-721d-40b4-8eea-dd299738aa14
+      description: 'The user id of the user.'
+      required: true
+      schema:
+        type: string
+    realmNameParam:
+      in: path 
+      name: realmName
+      example: demoRealm
+      description: 'Realm name.'
+      required: true
+      schema:
+        type: string
+    realmIdParam:
+      in: path 
+      name: realmId
+      example: c4db55e3-5ffe-4850-a1c1-17e1ea7d930c
+      description: 'Realm id.'
+      required: true
+      schema:
+        type: string
+    groupNameParam:
+      in: path
+      name: groupName
+      example: demoGroup
+      description: 'Group name.'
+      required: true
+      schema:
+        type: string
+    groupIdParam:
+      in: path
+      name: groupId
+      example: 714c831c-761b-4620-bdcf-15ede33b89de
+      description: 'Group id.'
+      required: true
+      schema:
+        type: string        
+    bearerTokenHeader:
+      in: header
+      name: bearerToken
+      example: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyVlhGVmE2aVNWSVR3cE0tc1pyVi1TYUtXamlDQ1VUd2RIbHdaakVmalV3In0.eyJleHAiOjE2ODI2MTQ2MDIsImlhdCI6MTY4MjYxMjgwMiwianRpIjoiMDFhMjI3YTYtYTlhNi00MWMxLThlODktMDA3MmJhMDJlZTg4IiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1wb3N0Z3Jlcy1vcGVyYXRvci5hcHBzLWNyYy50ZXN0aW5nL3JlYWxtcy9tYXN0ZXIiLCJzdWIiOiJkYmI3YzQwYy0wMzM2LTRkYmYtYjgwOS0xN2Q1YjIxNTdjNDciLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiZTAzYTY5YTQtNGVmZC00M2UzLWE5ZDUtYTUyODM4MzAyNjhmIiwiYWNyIjoiMSIsInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImUwM2E2OWE0LTRlZmQtNDNlMy1hOWQ1LWE1MjgzODMwMjY4ZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4ifQ.PnewdVPCp8QflZ3ZYLq-8R3cjzAgSmnI0VldqKFA3i_iJCOhX4mxDLeTF3_HjMAvDFZtjQF_v3Q3PgQ11qHew0SmAeO3jtOsdCl-b9tooIfEMdSVvgiK_8RJeTmkZWpxm852XhWWbdlvL8vS7m2dLLvjXfFs4Qmn7C4xY8wCrYn0t_uC9WRdZVpOp6K-lG0kzpXUTrACUFW97hUohLMS3c28dEWlab6z97Od9gsnr4QxLB49jLyXyC0kAF8eUlXuO_q8aCOeaKlubCQk1Xuh9p2ZOqhUk5-oU7zPkbswCiw0zzaJRWq26iKHEW1qS1J0dqDIdASe2jTJ6Bt3tSzmvg
+      description: 'Bearer token.'
+      required: true
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
