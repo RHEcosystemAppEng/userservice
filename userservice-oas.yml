@@ -15,6 +15,37 @@ tags:
   - name: user
     description: Operations about user
 paths:
+  /token:
+    post:
+      tags:
+        - token
+      summary: Get access token with password grant
+      operationId: getToken
+      requestBody:
+        description: x-www-form-urlencoded
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequestBody'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
   /user:
     post:
       tags:
@@ -139,6 +170,62 @@ components:
         clientRoles:
           type: object
           additionalProperties: true
+    TokenRequestBody:
+      type: object
+      properties:
+        username:
+          type: string
+          example: theUser
+        password:
+          type: string
+          example: changeIt
+        grant_type:
+          type: string
+          example: password
+        client_id:
+          type: string
+          example: user-service-admin
+        scope:
+          type: string
+          example: openid
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxSkt3QWZYUzEzbmR0T25zSTVLd0cyQ2NGUHNUWGFKdkFLZHcwcktQMkNNIn0.eyJleHAiOjE2ODI5NTU5ODIsImlhdCI6MTY4Mjk1NTkyMiwianRpIjoiODZkMTE0NzktZDE1NC00ODRkLTgzZjMtODU1YzUxOGMwZjNiIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJzdWIiOiI0MjBmZGIyMS0zMzA0LTRiZjQtOGZiNC01NWNlNDhlYzg0MmMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiMTQ5MmZjMjQtMjFkNi00OWQ0LTg1ZmEtNDMzNTFmOTdlMzI5IiwiYWNyIjoiMSIsInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjE0OTJmYzI0LTIxZDYtNDlkNC04NWZhLTQzMzUxZjk3ZTMyOSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4ifQ.kBfOA85FMoU9G8E6hf7C3F1iDt-Sov3I8t6RwaK8F1ehZZdEPNgdP_g3pQ65lKA1FrkHMGjhPn5ZIHtk7UlWArxXVHyVTWANbt-wlAcpQsdxPs9CeUfjdR_sFlPBlRNF7oxALRbptHaZs4C90orHsg7aN6x3uaERRsoaVo5_b4li59BVdVJ5OSiTi-XHbyPgzCyGibl9K5cFMR1GPLQEecrSVk5jeweMQExw7EZk9dYZDdnpoGCHgSoOk6RJ5pwzCuOv7K5e_B_bNsD-povEoHICJAcjzl23cHRz9-VIGFT71MGUTFoWOnuWDo5FmkeE0o9ZmnEUcyZtxnr9UJc0TA
+        expires_in:
+          type: integer
+          example: 60
+        refresh_expires_in:
+          type: integer
+          example: 1800
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxODdhYWMxOC1iOTY0LTRkZjAtOGFkNS00M2Y2ZGQxYzQ1MDEifQ.eyJleHAiOjE2ODI5NTc3MjIsImlhdCI6MTY4Mjk1NTkyMiwianRpIjoiNGQ5Mjc2YmEtMGJhNi00ZjA1LWFkMTUtMWI2NTJkNjNhZDY0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvcmVhbG1zL21hc3RlciIsInN1YiI6IjQyMGZkYjIxLTMzMDQtNGJmNC04ZmI0LTU1Y2U0OGVjODQyYyIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJhZG1pbi1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiMTQ5MmZjMjQtMjFkNi00OWQ0LTg1ZmEtNDMzNTFmOTdlMzI5Iiwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMTQ5MmZjMjQtMjFkNi00OWQ0LTg1ZmEtNDMzNTFmOTdlMzI5In0.WnmKcLPbO29jUet1fcYBRtV_jS4wrJkS1FzOe-BWliQ
+        token_type:
+          type: string
+          example: Bearer
+        not-before-policy:
+          type: integer
+          example: 0
+        session_state:
+          type: string
+          example: 1492fc24-21d6-49d4-85fa-43351f97e329
+        scope:
+          type: string
+          example: email profile
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_grant
+        error_description:
+          type: string
+          example: Invalid user credentials
+          
+          
   parameters:
     usernameParam:
       in: path 
