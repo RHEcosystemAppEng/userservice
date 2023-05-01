@@ -22,7 +22,7 @@ paths:
       summary: Get access token with password grant
       operationId: getToken
       requestBody:
-        description: x-www-form-urlencoded
+        description: Request body to get access token with password grant
         content:
           application/x-www-form-urlencoded:
             schema:
