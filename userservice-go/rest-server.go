@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	routes "userservice-go/routes/user-routes"
 )
 
 var (
@@ -15,7 +16,7 @@ func InitializeAndStartServer() {
 }
 
 func initializeRoutes(server gin.Engine) {
-
+	server.GET("/user/:username", routes.GetUserByUserName)
 }
 
 func startServer(server gin.Engine) {
