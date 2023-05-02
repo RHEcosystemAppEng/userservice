@@ -14,7 +14,81 @@ servers:
 tags:
   - name: user
     description: Operations about user
+  - name: usersearch
+    description: Operations about user searches
+  - name: token
+    description: Operations about oidc token
 paths:
+  /findusers:
+    post:
+      tags: 
+        - usersearch
+      summary: Find users based on input search criteria
+      operationId: findUsers
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSearchCriteria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserSearchCriteria'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSearchResponse'
+  /findusercount:
+    post:
+      tags: 
+        - usersearch
+      summary: Find count of users based on input search criteria
+      operationId: findUserCount
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSearchCriteria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserSearchCriteria'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSearchCountResponse'
+  /user/{username}:
+    get:
+      tags:
+        - usersearch
+      summary: Get user by user name
+      operationId: getUserByName
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/usernameParam"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
   /token:
     post:
       tags:
@@ -60,9 +134,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/User'
@@ -73,33 +144,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      operationId: getUserByName
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/usernameParam"
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
     put:
       tags:
         - user
@@ -170,6 +214,46 @@ components:
         clientRoles:
           type: object
           additionalProperties: true
+    UserSearchCriteria:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 28718e03-721d-40b4-8eea-dd299738aa14
+        username:
+          type: string
+          example: theUser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        enabled:
+          type: boolean
+          example: true
+        email:
+          type: string
+          example: john@yourcompany.com
+        emailVerified:
+          type: boolean
+          example: true
+        userAttributes: # e.g. a map with key value pairs: orgid=redhat, org_admin=true, is_internal=false, type=privileged
+          type: object
+          additionalProperties: true
+        clientRoles:
+          type: object
+          additionalProperties: true
+    UserSearchResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    UserSearchCountResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 234
     TokenRequestBody:
       type: object
       properties:
