@@ -84,11 +84,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
         '404':
           description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/usernameParam"
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/usernameParam"
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  
   /token:
     post:
       tags:
@@ -108,16 +141,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Token'
         '401':
           description: Invalid credentials
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-            application/xml:
               schema:
                 $ref: '#/components/schemas/Error'
   /user:
@@ -144,44 +171,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-    put:
-      tags:
-        - user
-      summary: Update user
-      operationId: updateUser
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/usernameParam"
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      operationId: deleteUser
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/usernameParam"
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
+
 components:
   schemas:
     User:
