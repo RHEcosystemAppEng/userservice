@@ -11,7 +11,7 @@ import (
 var (
 	BACKEND_KEYCLOAK_URL = "http://localhost:8080"
 	USER_SERVICE_PORT = ":8000"
-	allowedURLs = map[string]bool{
+	ALLOWED_URLS = map[string]bool{
 		"/realms/master/protocol/openid-connect/token":  true,
 	}
 )
@@ -53,9 +53,9 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(isURLAllowedMiddleware(allowedURLs))
+	r.Use(isURLAllowedMiddleware(ALLOWED_URLS))
+	
 	//Create a catchall route
-
 	r.Any("/*proxyPath", proxy)
 
 	r.Run(USER_SERVICE_PORT)
