@@ -2,7 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	routes "userservice-go/routes/user-routes"
+	tokenroutes "userservice-go/routes/token-routes"
+	userroutes "userservice-go/routes/user-routes"
 )
 
 var (
@@ -16,7 +17,8 @@ func InitializeAndStartServer() {
 }
 
 func initializeRoutes(server gin.Engine) {
-	server.GET("/user/:username", routes.GetUserByUserName)
+	server.GET("/user/:username", userroutes.GetUserByUserName)
+	server.POST("/token", tokenroutes.GetTokenWithPasswordGrant)
 }
 
 func startServer(server gin.Engine) {

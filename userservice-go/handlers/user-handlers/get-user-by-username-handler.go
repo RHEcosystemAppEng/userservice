@@ -1,8 +1,11 @@
 package user_handles
 
-import "userservice-go/types"
+import (
+	"userservice-go/types"
+)
 
-func GetUserByUserName(userName string) types.User {
-	user := types.User{}
+func GetUserByUserNameHandler(userName string) types.User {
+	url := types.KEYCLOAK_BACKEND_URL
+	user := types.User{Id: url}
 	return user
 }
