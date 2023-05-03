@@ -15,5 +15,12 @@ func GetUserByUserName(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, error)
 	}
 
-	user_handles.GetUserByUserNameHandler(username)
+	err, user := user_handles.GetUserByUserNameHandler(username)
+
+	if err != nil {
+		error := &types.Error{Error: "Get by username error", ErrorDescription: "Get by username error"}
+		c.JSON(http.StatusBadRequest, error)
+	}
+
+	c.JSON(http.StatusOK, user)
 }

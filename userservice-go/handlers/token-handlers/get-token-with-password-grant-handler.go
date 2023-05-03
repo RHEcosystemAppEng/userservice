@@ -32,6 +32,7 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 		responseData, err := ioutil.ReadAll(response.Body)
 		if err != nil {
 			log.Fatal(err)
+			return err, token
 		}
 		json.Unmarshal(responseData, &token)
 	}
