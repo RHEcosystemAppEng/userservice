@@ -21,7 +21,7 @@ tags:
 paths:
   /findusers:
     post:
-      tags: 
+      tags:
         - usersearch
       summary: Find users based on input search criteria
       operationId: findUsers
@@ -45,7 +45,7 @@ paths:
                 $ref: '#/components/schemas/FindUsersResponse'
   /findusercount:
     post:
-      tags: 
+      tags:
         - usersearch
       summary: Find count of users based on input search criteria
       operationId: findUserCount
@@ -83,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'          
+                $ref: '#/components/schemas/User'
         '404':
           description: User not found
     put:
@@ -121,7 +121,7 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-  
+
   /token:
     post:
       tags:
@@ -200,10 +200,32 @@ components:
           example: true
         userAttributes: # e.g. a map with key value pairs: orgid=redhat, org_admin=true, is_internal=false, type=privileged
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: string
         clientRoles:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            type: string
+        access:
+          type: object
+          additionalProperties:
+            type: boolean
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+        requiredActions:
+          type: array
+          items:
+            type: string
+        realmRoles:
+          type: array
+          items:
+            type: string
+        groups:
+          type: array
+          items:
+            type: string
     FindUsersCriteria:
       type: object
       properties:
@@ -298,11 +320,11 @@ components:
         error_description:
           type: string
           example: Invalid user credentials
-          
-          
+
+
   parameters:
     usernameParam:
-      in: path 
+      in: path
       name: username
       example: theUser
       description: 'The username that needs to be fetched.'
@@ -310,7 +332,7 @@ components:
       schema:
         type: string
     userIdParam:
-      in: path 
+      in: path
       name: userId
       example: 28718e03-721d-40b4-8eea-dd299738aa14
       description: 'The user id of the user.'
@@ -318,7 +340,7 @@ components:
       schema:
         type: string
     realmNameParam:
-      in: path 
+      in: path
       name: realmName
       example: demoRealm
       description: 'Realm name.'
@@ -326,7 +348,7 @@ components:
       schema:
         type: string
     realmIdParam:
-      in: path 
+      in: path
       name: realmId
       example: c4db55e3-5ffe-4850-a1c1-17e1ea7d930c
       description: 'Realm id.'
@@ -348,7 +370,7 @@ components:
       description: 'Group id.'
       required: true
       schema:
-        type: string        
+        type: string
     bearerTokenHeader:
       in: header
       name: bearerToken

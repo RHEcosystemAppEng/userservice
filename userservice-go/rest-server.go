@@ -4,10 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	tokenroutes "userservice-go/routes/token-routes"
 	userroutes "userservice-go/routes/user-routes"
-)
-
-var (
-	USER_SERVICE_PORT = ":8000"
+	"userservice-go/types"
 )
 
 func InitializeAndStartServer() {
@@ -22,5 +19,5 @@ func initializeRoutes(server gin.Engine) {
 }
 
 func startServer(server gin.Engine) {
-	server.Run(USER_SERVICE_PORT)
+	server.Run(types.USER_SERVICE_PORT)
 }

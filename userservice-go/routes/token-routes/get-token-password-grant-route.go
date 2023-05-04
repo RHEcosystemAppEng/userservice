@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	token_handlers "userservice-go/handlers/token-handlers"
+	tokenhandlers "userservice-go/handlers/token-handlers"
 	"userservice-go/types"
 )
 
@@ -17,7 +17,7 @@ func GetTokenWithPasswordGrant(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, error)
 	}
 
-	err, token := token_handlers.GetTokenWithPasswordGrantHandler(tokenRequest)
+	err, token := tokenhandlers.GetTokenWithPasswordGrantHandler(tokenRequest)
 
 	if err != nil {
 		log.Fatal(err)
