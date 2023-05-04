@@ -13,6 +13,7 @@ func GetUserByUserName(c *gin.Context) {
 	if strings.TrimSpace(username) == "" {
 		error := &types.Error{Error: "username cannot be empty", ErrorDescription: "username cannot be empty"}
 		c.JSON(http.StatusBadRequest, error)
+		return
 	}
 
 	err, user := user_handles.GetUserByUserNameHandler(username)
@@ -20,6 +21,7 @@ func GetUserByUserName(c *gin.Context) {
 	if err != nil {
 		error := &types.Error{Error: "Get by username error", ErrorDescription: "Get by username error"}
 		c.JSON(http.StatusBadRequest, error)
+		return
 	}
 
 	c.JSON(http.StatusOK, user)

@@ -2,9 +2,9 @@ package token_handlers
 
 import (
 	"encoding/json"
+	log "github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -20,17 +20,17 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 	data.Set("client_id", tokenRequestFormBody.Client_id)
 	data.Set("grant_type", tokenRequestFormBody.Grant_type)
 
-	response, err := http.Post(types.KEYCLOAK_BACKEND_URL+types.KEYCLOAK_MASTER_TOKEN_PATH, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	response, err := http.Post(types.KEYCLOAK_BACKEND_URL+types.KEYCLOAK_TOKEN_PATH, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msg(err.Error())
 		return err, token
 	}
 
 	if response.StatusCode == http.StatusOK {
 		responseData, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Msg(err.Error())
 			return err, token
 		}
 		json.Unmarshal(responseData, &token)
@@ -51,13 +51,13 @@ func GetKeycloakToken() (error, types.Token) {
 func GetHttpClientAndRequestWithToken(httpMethod string, url string, body io.Reader) (error, *http.Request, *http.Client) {
 	req, err := http.NewRequest(http.MethodGet, url, body)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msg(err.Error())
 		return err, nil, nil
 	}
 
 	err, token := GetKeycloakToken()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msg(err.Error())
 		return err, nil, nil
 	}
 

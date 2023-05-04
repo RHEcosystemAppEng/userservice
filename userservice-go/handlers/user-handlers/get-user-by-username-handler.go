@@ -3,8 +3,8 @@ package user_handles
 import (
 	"encoding/json"
 	"errors"
+	log "github.com/rs/zerolog/log"
 	"io/ioutil"
-	"log"
 	"net/http"
 	tokenhandlers "userservice-go/handlers/token-handlers"
 	"userservice-go/types"
@@ -17,14 +17,14 @@ func GetUserByUserNameHandler(userName string) (error, types.User) {
 
 	err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Msg(err.Error())
 		return err, user
 	}
 
 	if client != nil && req != nil {
 		response, err := client.Do(req)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Msg(err.Error())
 			return err, user
 		}
 
@@ -32,13 +32,13 @@ func GetUserByUserNameHandler(userName string) (error, types.User) {
 			responseData, err := ioutil.ReadAll(response.Body)
 
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal().Msg(err.Error())
 				return err, user
 			}
 			var users []types.User
 			err = json.Unmarshal(responseData, &users)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal().Msg(err.Error())
 				return err, user
 			}
 			user = users[0]

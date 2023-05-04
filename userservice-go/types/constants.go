@@ -7,8 +7,9 @@ var (
 	ADMIN_PASSWORD                = "admin"
 	GRANT_TYPE                    = "password"
 	CLIENT_ID                     = "admin-cli"
+	KEYCLOAK_REALM                = "master"
 	KEYCLOAK_MASTER_REALM_TOKEN   = ""
-	KEYCLOAK_MASTER_TOKEN_PATH    = "realms/master/protocol/openid-connect/token"
+	KEYCLOAK_TOKEN_PATH           = "realms/master/protocol/openid-connect/token"
 	KEYCLOAK_GET_BY_USERNAME_PATH = "admin/realms/master/users?username="
 	USER_SERVICE_PORT             = ":8000"
 

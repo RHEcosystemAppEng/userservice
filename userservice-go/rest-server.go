@@ -7,6 +7,7 @@ import (
 	"userservice-go/types"
 )
 
+// InitializeAndStartServer Initializes and starts the server
 func InitializeAndStartServer() {
 	server := gin.Default()
 	initializeRoutes(*server)
