@@ -2,6 +2,7 @@ package token_handlers
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,8 +20,6 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 	data.Set("client_id", tokenRequestFormBody.Client_id)
 	data.Set("grant_type", tokenRequestFormBody.Grant_type)
 
-	log.Println("Token data received: ", data)
-
 	response, err := http.Post(types.KEYCLOAK_BACKEND_URL+types.KEYCLOAK_MASTER_TOKEN_PATH, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 
 	if err != nil {
@@ -37,4 +36,32 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 		json.Unmarshal(responseData, &token)
 	}
 	return nil, token
+}
+
+func GetKeycloakToken() (error, types.Token) {
+	tokenRequestBody := types.TokenRequestFormBody{
+		Grant_type: types.GRANT_TYPE,
+		Client_id:  types.CLIENT_ID,
+		Username:   types.ADMIN_USER,
+		Password:   types.ADMIN_PASSWORD,
+	}
+	return GetTokenWithPasswordGrantHandler(tokenRequestBody)
+}
+
+func GetHttpClientAndRequestWithToken(httpMethod string, url string, body io.Reader) (error, *http.Request, *http.Client) {
+	req, err := http.NewRequest(http.MethodGet, url, body)
+	if err != nil {
+		log.Fatal(err)
+		return err, nil, nil
+	}
+
+	err, token := GetKeycloakToken()
+	if err != nil {
+		log.Fatal(err)
+		return err, nil, nil
+	}
+
+	var bearer = "Bearer " + token.AccessToken
+	req.Header.Set("Authorization", bearer)
+	return nil, req, &http.Client{}
 }

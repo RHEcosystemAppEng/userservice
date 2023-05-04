@@ -24,6 +24,5 @@ func GetTokenWithPasswordGrant(c *gin.Context) {
 		error := &types.Error{Error: "Error getting token", ErrorDescription: "Error getting token"}
 		c.JSON(http.StatusBadRequest, error)
 	}
-	log.Println("Obtained token: ", token)
 	c.JSON(http.StatusOK, token)
 }

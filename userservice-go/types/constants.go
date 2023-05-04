@@ -10,4 +10,6 @@ var (
 	KEYCLOAK_MASTER_REALM_TOKEN   = ""
 	KEYCLOAK_MASTER_TOKEN_PATH    = "realms/master/protocol/openid-connect/token"
 	KEYCLOAK_GET_BY_USERNAME_PATH = "admin/realms/master/users?username="
+
+	ERR_NIL_HTTP_CLIENT_OR_REQUEST = "nil http request or http client object"
 )

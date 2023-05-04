@@ -13,5 +13,7 @@ type User struct {
 
 	Email string `json:"email,omitempty"`
 
-	EmailVerified bool `json:"emailVerified,omitempty"`
+	Emailverified bool `json:"emailVerified,omitempty"`
+
+	Access map[string]bool `json:"access,omitempty"`
 }
