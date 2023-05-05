@@ -23,14 +23,14 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 	response, err := http.Post(types.KEYCLOAK_BACKEND_URL+types.KEYCLOAK_TOKEN_PATH, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		log.Error().Msg(err.Error())
 		return err, token
 	}
 
 	if response.StatusCode == http.StatusOK {
 		responseData, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			log.Fatal().Msg(err.Error())
+			log.Error().Msg(err.Error())
 			return err, token
 		}
 		json.Unmarshal(responseData, &token)
@@ -51,13 +51,13 @@ func GetKeycloakToken() (error, types.Token) {
 func GetHttpClientAndRequestWithToken(httpMethod string, url string, body io.Reader) (error, *http.Request, *http.Client) {
 	req, err := http.NewRequest(http.MethodGet, url, body)
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		log.Error().Msg(err.Error())
 		return err, nil, nil
 	}
 
 	err, token := GetKeycloakToken()
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		log.Error().Msg(err.Error())
 		return err, nil, nil
 	}
 

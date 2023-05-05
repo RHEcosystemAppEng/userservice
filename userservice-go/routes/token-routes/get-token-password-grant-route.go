@@ -12,16 +12,16 @@ func GetTokenWithPasswordGrant(c *gin.Context) {
 	var tokenRequest types.TokenRequestFormBody
 	err := c.Bind(&tokenRequest)
 	if err != nil {
-		log.Fatal().Msg(err.Error())
-		error := &types.Error{Error: "Invalid token request", ErrorDescription: "Invalid token request data"}
+		error := &types.Error{Error: "Invalid token request", ErrorDescription: err.Error()}
 		c.JSON(http.StatusBadRequest, error)
+		log.Error().Msg(err.Error())
 		return
 	}
 
 	err, token := tokenhandlers.GetTokenWithPasswordGrantHandler(tokenRequest)
 
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		log.Error().Msg(err.Error())
 		error := &types.Error{Error: "Error getting token", ErrorDescription: "Error getting token"}
 		c.JSON(http.StatusBadRequest, error)
 		return
