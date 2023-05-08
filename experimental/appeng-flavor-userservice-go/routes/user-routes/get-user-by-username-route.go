@@ -1,10 +1,10 @@
 package user_routes
 
 import (
+	user_handles "find-users-service-go/handlers/user-handlers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
-	user_handles "userservice-go/handlers/user-handlers"
 	"userservice-go/types"
 )
 

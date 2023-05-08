@@ -15,7 +15,7 @@ func InitializeAndStartServer() {
 }
 
 func initializeRoutes(server gin.Engine) {
-	server.GET("/user/:username", userroutes.GetUserByUserName)
+	server.GET("/users", userroutes.GetUsersByUsersCriteria)
 	server.POST("/token", tokenroutes.GetTokenWithPasswordGrant)
 }
 

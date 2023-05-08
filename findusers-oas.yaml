@@ -1,0 +1,232 @@
+openapi: 3.0.0
+info:
+  description: Retrieve user data from Keycloak
+  version: 1.0.0
+  title: Keycloak User Service
+tags:
+  - name: Users
+    description: Operations on users
+paths:
+  /users/:
+    get:
+      tags:
+        - Users
+      summary: list
+      description: List users for an organization
+      operationId: listUsers
+      parameters:
+        - name: org_id
+          in: query
+          required: false
+          description: Parameter for filtering users by organization
+          schema:
+            type: string
+        - name: usernames
+          in: query
+          required: false
+          description: Parameter for filtering users by `username`
+          schema:
+            type: array
+            items:
+              type: string
+        - name: emails
+          in: query
+          required: false
+          description: Parameter for filtering users by `email`
+          schema:
+            type: array
+            items:
+              type: string
+        - name: user_ids
+          in: query
+          required: false
+          description: Parameter for filtering users by `user_id`
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/QueryLimit'
+        - $ref: '#/components/parameters/QueryOffset'
+        - in: query
+          name: order
+          required: false
+          description: Parameter for ordering
+          schema:
+            type: string
+            enum:
+              - email
+              - username
+              - modified
+              - created
+      responses:
+        '200':
+          description: A paginated list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPagination'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Insufficient permissions to list users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '500':
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    QueryOffset:
+      in: query
+      name: offset
+      required: false
+      description: Parameter for selecting the offset of data.
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    QueryLimit:
+      in: query
+      name: limit
+      required: false
+      description: Parameter for selecting the amount of data returned.
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 1000
+  schemas:
+    Error:
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: Internal server error.
+              status:
+                type: string
+                example: '500'
+    Error403:
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: You do not have permission to perform this action.
+              source:
+                type: string
+                example: detail
+              status:
+                type: string
+                example: '403'
+    UUID:
+      type: object
+      required:
+        - uuid
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 57e60f90-8c0c-4bd1-87a0-2143759aae1c
+    Timestamped:
+      type: object
+      required:
+        - created
+        - modified
+      properties:
+        created:
+          type: string
+          format: date-time
+          example: '2019-01-21T17:32:28Z'
+        modified:
+          type: string
+          format: date-time
+          example: '2019-03-04T07:25:58Z'
+    PaginationMeta:
+      properties:
+        total:
+          type: integer
+          format: int64
+          example: 30
+        first:
+          type: string
+          format: uri
+          example: /users/?offset=0&limit=10
+        previous:
+          type: string
+          format: uri
+          example: /users/?offset=20&limit=10
+        next:
+          type: string
+          format: uri
+          example: /users/?offset=40&limit=10
+        last:
+          type: string
+          format: uri
+          example: /users/?offset=90&limit=10
+    ListPagination:
+      properties:
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    UserPagination:
+      allOf:
+        - $ref: '#/components/schemas/ListPagination'
+        - type: object
+          required:
+            - users
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserOut'
+    User:
+      required:
+        - name
+      properties:
+        user_id:
+          type: string
+          example: 123
+        username:
+          type: string
+          example: jdoe
+        email:
+          type: string
+          example: jdoe@example.com
+        first_name:
+          type: string
+          example: Jane
+        last_name:
+          type: string
+          example: Doe
+        org_admin:
+          type: boolean
+          example: true
+        is_internal:
+          type: boolean
+          example: false
+        org_id:
+          type: string
+          example: 456
+        type:
+          type: string
+          example: service_account
+    UserOut:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - $ref: '#/components/schemas/UUID'
+        - $ref: '#/components/schemas/Timestamped'

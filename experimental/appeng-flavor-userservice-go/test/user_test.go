@@ -1,11 +1,11 @@
 package test
 
 import (
+	userroutes "find-users-service-go/routes/user-routes"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	userroutes "userservice-go/routes/user-routes"
 )
 
 func TestGetUserByUserNameBlank(t *testing.T) {
