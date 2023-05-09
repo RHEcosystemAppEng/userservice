@@ -1,15 +1,15 @@
 package types
 
 type User struct {
-	UserId string `json:"user_id,omitempty"`
+	UserId string `json:"id,omitempty"`
 
 	Username string `json:"username,omitempty"`
 
 	Email string `json:"email,omitempty"`
 
-	FirstName string `json:"first_name,omitempty"`
+	FirstName string `json:"firstName,omitempty"`
 
-	LastName string `json:"last_name,omitempty"`
+	LastName string `json:"lastName,omitempty"`
 
 	OrgAdmin bool `json:"org_admin,omitempty"`
 
@@ -18,4 +18,7 @@ type User struct {
 	OrgId string `json:"org_id,omitempty"`
 
 	Type_ string `json:"type,omitempty"`
+
+	// Added in addition to OpenAPI spec
+	Attributes map[string][]string `json:"attributes,omitempty"`
 }

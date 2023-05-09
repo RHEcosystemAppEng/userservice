@@ -23,8 +23,10 @@ func LoadEnvVars() {
 		types.KEYCLOAK_MASTER_REALM_TOKEN = os.Getenv("KEYCLOAK_MASTER_REALM_TOKEN")
 		types.KEYCLOAK_TOKEN_PATH = os.Getenv("KEYCLOAK_TOKEN_PATH")
 		types.KEYCLOAK_GET_BY_USERNAME_PATH = os.Getenv("KEYCLOAK_GET_BY_USERNAME_PATH")
+		types.KEYCLOAK_GET_BY_USERS = os.Getenv("KEYCLOAK_GET_BY_USERS")
 		types.KEYCLOAK_TOKEN_PATH = os.ExpandEnv(types.KEYCLOAK_TOKEN_PATH)
 		types.KEYCLOAK_GET_BY_USERNAME_PATH = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERNAME_PATH)
+		types.KEYCLOAK_GET_BY_USERS = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERS)
 		log.Info().Msg("Loaded environment variables")
 	}
 }

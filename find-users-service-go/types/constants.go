@@ -11,6 +11,7 @@ var (
 	KEYCLOAK_MASTER_REALM_TOKEN   = ""
 	KEYCLOAK_TOKEN_PATH           = "realms/master/protocol/openid-connect/token"
 	KEYCLOAK_GET_BY_USERNAME_PATH = "admin/realms/master/users?username="
+	KEYCLOAK_GET_BY_USERS         = "admin/realms/master/users"
 	USER_SERVICE_PORT             = ":8000"
 
 	USERNAME_PARAM   = "username"
