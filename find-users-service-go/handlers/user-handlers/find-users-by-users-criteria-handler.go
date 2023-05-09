@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	tokenhandlers "userservice-go/handlers/token-handlers"
 	"userservice-go/types"
 )
@@ -160,4 +161,24 @@ func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []typ
 		}
 	}
 	return nil, usersList
+}
+
+func processUserCustomAttributes(user types.User) types.User {
+
+	if len(user.Attributes["is_internal"]) > 0 {
+		isInternal := user.Attributes["is_internal"]
+		user.IsInternal, _ = strconv.ParseBool(isInternal[0])
+	}
+
+	if len(user.Attributes["org_admin"]) > 0 {
+		orgAdmin := user.Attributes["org_admin"]
+		user.OrgAdmin, _ = strconv.ParseBool(orgAdmin[0])
+	}
+
+	if len(user.Attributes["type"]) > 0 {
+		userType := user.Attributes["type"]
+		user.Type_ = userType[0]
+	}
+
+	return user
 }
