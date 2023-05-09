@@ -25,9 +25,15 @@ func GetUsersByUsersCriteria(c *gin.Context) {
 		return
 	}
 
-	findUsersCriteria.Emails = strings.Split(findUsersCriteria.EmailsQueryArray, ",")
-	findUsersCriteria.UserIds = strings.Split(findUsersCriteria.UserIdsQueryArray, ",")
-	findUsersCriteria.Usernames = strings.Split(findUsersCriteria.UserNamesQueryArray, ",")
+	if len(findUsersCriteria.UserIdsQueryArray) != 0 {
+		findUsersCriteria.UserIds = strings.Split(findUsersCriteria.UserIdsQueryArray, ",")
+	}
+	if len(findUsersCriteria.EmailsQueryArray) != 0 {
+		findUsersCriteria.Emails = strings.Split(findUsersCriteria.EmailsQueryArray, ",")
+	}
+	if len(findUsersCriteria.UserNamesQueryArray) != 0 {
+		findUsersCriteria.Usernames = strings.Split(findUsersCriteria.UserNamesQueryArray, ",")
+	}
 
 	err, usersList := userhandlers.FindUsers(findUsersCriteria)
 

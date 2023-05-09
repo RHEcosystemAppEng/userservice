@@ -41,34 +41,12 @@ func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []type
 		if len(email) != 0 {
 			url := hostPath + "&" + "email=" + email
 			log.Info().Msg(url)
-			err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
+			err, users := executeGetUserHttpRequest(url)
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList
 			}
-
-			if client != nil && req != nil {
-				response, err := client.Do(req)
-				if err != nil {
-					log.Error().Msg(err.Error())
-					return err, usersList
-				}
-
-				if response.StatusCode == http.StatusOK {
-					responseData, err := ioutil.ReadAll(response.Body)
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					var users []types.User
-					err = json.Unmarshal(responseData, &users)
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					usersList = append(usersList, users...)
-				}
-			}
+			usersList = append(usersList, users...)
 		}
 	}
 	return nil, usersList
@@ -84,35 +62,12 @@ func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []t
 		if len(userName) != 0 {
 			url := hostPath + "&" + "username=" + userName
 			log.Info().Msg(url)
-			err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
+			err, users := executeGetUserHttpRequest(url)
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList
 			}
-
-			if client != nil && req != nil {
-				response, err := client.Do(req)
-				if err != nil {
-					log.Error().Msg(err.Error())
-					return err, usersList
-				}
-
-				if response.StatusCode == http.StatusOK {
-					responseData, err := ioutil.ReadAll(response.Body)
-
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					var users []types.User
-					err = json.Unmarshal(responseData, &users)
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					usersList = append(usersList, users...)
-				}
-			}
+			usersList = append(usersList, users...)
 		}
 	}
 	return nil, usersList
@@ -126,45 +81,62 @@ func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []typ
 
 	for _, userId := range findUsersCriteria.UserIds {
 		if len(userId) != 0 {
-			// url := hostPath + "&" + "email=" + email
 			url := hostPath + "&" + "id=" + userId
 			log.Info().Msg(url)
-			err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
+			err, users := executeGetUserHttpRequest(url)
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList
 			}
-
-			if client != nil && req != nil {
-				response, err := client.Do(req)
-				if err != nil {
-					log.Error().Msg(err.Error())
-					return err, usersList
-				}
-
-				if response.StatusCode == http.StatusOK {
-					responseData, err := ioutil.ReadAll(response.Body)
-
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					var users []types.User
-					err = json.Unmarshal(responseData, &users)
-					if err != nil {
-						log.Error().Msg(err.Error())
-						return err, usersList
-					}
-					usersList = append(usersList, users...)
-				}
-			}
+			usersList = append(usersList, users...)
 		}
 	}
 	return nil, usersList
 }
 
-func processUserCustomAttributes(user types.User) types.User {
+func executeGetUserHttpRequest(url string) (error, []types.User) {
+	var users []types.User
 
+	err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return err, users
+	}
+
+	if client != nil && req != nil {
+		response, err := client.Do(req)
+		if err != nil {
+			log.Error().Msg(err.Error())
+			return err, users
+		}
+
+		if response.StatusCode == http.StatusOK {
+			responseData, err := ioutil.ReadAll(response.Body)
+
+			if err != nil {
+				log.Error().Msg(err.Error())
+				return err, users
+			}
+			err = json.Unmarshal(responseData, &users)
+			if err != nil {
+				log.Error().Msg(err.Error())
+				return err, users
+			}
+			users = processUsersCustomAttributes(users)
+		}
+	}
+	return nil, users
+}
+
+func processUsersCustomAttributes(users []types.User) []types.User {
+	for i, user := range users {
+		users[i] = processUserCustomAttributes(user)
+	}
+
+	return users
+}
+
+func processUserCustomAttributes(user types.User) types.User {
 	if len(user.Attributes["is_internal"]) > 0 {
 		isInternal := user.Attributes["is_internal"]
 		user.IsInternal, _ = strconv.ParseBool(isInternal[0])
