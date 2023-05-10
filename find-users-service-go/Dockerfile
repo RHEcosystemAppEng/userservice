@@ -11,7 +11,7 @@ RUN go mod download
 COPY main.go main.go
 COPY environment.go environment.go
 COPY rest-server.go rest-server.go
-COPY .env .env
+COPY .env.docker .env
 
 COPY handlers/ handlers/
 COPY middlewares/ middlewares/
@@ -26,6 +26,7 @@ FROM registry.access.redhat.com/ubi8-minimal:8.7
 
 WORKDIR /
 COPY --from=builder /opt/app-root/src/userservice .
+COPY --from=builder /opt/app-root/src/.env .
 USER 65532:65532
 
 ENTRYPOINT ["/userservice"]

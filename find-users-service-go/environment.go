@@ -11,7 +11,7 @@ import (
 func LoadEnvVars() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Error().Msg("Error loading .env file, will fallback to default environment variables")
+		log.Error().Msg("Error loading .env file, will fallback to default environment variables. " + err.Error())
 	} else {
 		types.USER_SERVICE_PORT = os.Getenv("USER_SERVICE_PORT")
 		types.KEYCLOAK_BACKEND_URL = os.Getenv("KEYCLOAK_BACKEND_URL")
