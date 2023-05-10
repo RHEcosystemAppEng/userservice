@@ -125,3 +125,7 @@ docker build --rm --tag userservice .
 ```shell
 docker run -p 8000:8000 userservice
 ```
+
+## Using different environment variables with .env files
+* Currently the .env file is used for running the userservice locally on the host machine.
+* .env.docker file is used for running the userservice in docker on the host machine with Keycloak service.
