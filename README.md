@@ -100,6 +100,7 @@ curl --location 'http://localhost:8080/admin/realms/master/users' \
 }'
 ```
 
+### Use Find Users API in userservice
 * Call Find Users API with following criteria
 ```shell
 # Search users with usernames
