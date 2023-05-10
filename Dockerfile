@@ -13,10 +13,10 @@ COPY environment.go environment.go
 COPY rest-server.go rest-server.go
 COPY .env.docker .env
 
-COPY handlers/ handlers/
-COPY middlewares/ middlewares/
-COPY routes/ routes/
-COPY types/ types/
+COPY handlers handlers/
+COPY middlewares middlewares/
+COPY routes routes/
+COPY types types/
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o userservice .
