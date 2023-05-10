@@ -12,6 +12,7 @@ func GetTokenWithPasswordGrant(c *gin.Context) {
 	var tokenRequest types.TokenRequestFormBody
 	err := c.Bind(&tokenRequest)
 	if err != nil {
+		log.Info().Msg("Could not bind request parameters")
 		error := &types.Error{Detail: "Invalid token request, please check token request parameters", Status: string(http.StatusBadRequest)}
 		c.JSON(http.StatusBadRequest, error)
 		log.Error().Msg(err.Error())

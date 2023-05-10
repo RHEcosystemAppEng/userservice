@@ -27,3 +27,5 @@ openapi.json
 openapi.yml
 cmds
 temp
+out
+bin
