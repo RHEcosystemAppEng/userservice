@@ -36,14 +36,6 @@ func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) 
 	return nil, usersList
 }
 
-func limitResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
-	if findUsersCriteria.QueryLimit > 0 && len(usersList) > findUsersCriteria.QueryLimit {
-		return append(usersList[:findUsersCriteria.QueryLimit])
-	} else {
-		return usersList
-	}
-}
-
 func findAllUsers() (error, []types.User) {
 	var usersList []types.User
 
@@ -210,4 +202,12 @@ func processUserCustomAttributes(user types.User) types.User {
 	}
 
 	return user
+}
+
+func limitResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
+	if findUsersCriteria.QueryLimit > 0 && len(usersList) > findUsersCriteria.QueryLimit {
+		return append(usersList[:findUsersCriteria.QueryLimit])
+	} else {
+		return usersList
+	}
 }
