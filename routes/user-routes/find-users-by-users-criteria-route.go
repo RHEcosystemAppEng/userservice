@@ -18,13 +18,6 @@ func GetUsersByUsersCriteria(c *gin.Context) {
 		return
 	}
 
-	// One of the filters needs to be provided: usernames, emails or user_ids
-	if len(findUsersCriteria.UserIdsQueryArray) == 0 && len(findUsersCriteria.EmailsQueryArray) == 0 && len(findUsersCriteria.UserNamesQueryArray) == 0 {
-		error := &types.Error{Detail: "One of the filter criteria needs to be specified: user_ids, emails or usernames", Status: types.HTTP_CODE_BAD_REQUEST}
-		c.JSON(http.StatusBadRequest, error)
-		return
-	}
-
 	if len(findUsersCriteria.UserIdsQueryArray) != 0 {
 		findUsersCriteria.UserIds = strings.Split(findUsersCriteria.UserIdsQueryArray, ",")
 	}

@@ -11,8 +11,8 @@ var (
     "session_state": "30de5274-88aa-42cf-beed-0356e02770be",
     "scope": "profile email"
 }`
-	KEYCLOAK_FIND_USERS_BY_EMAIL1 = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&email=1@1.com"
-	KEYCLOAK_FIND_USERS_BY_EMAIL2 = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&email=2@2.com"
+	KEYCLOAK_FIND_USERS_BY_EMAIL1 = "http://localhost:8080/admin/realms/master/users?email=1%401.com&q=org_id%3Arh"
+	KEYCLOAK_FIND_USERS_BY_EMAIL2 = "http://localhost:8080/admin/realms/master/users?email=2%402.com&q=org_id%3Arh"
 	KEYCLOAK_USER_DATA1           = `[
     {
         "id": "779edba7-2dbe-44f5-89f8-38ccd3368b30",
@@ -65,8 +65,8 @@ var (
         }
     }
 ]`
-	KEYCLOAK_FIND_USERS_BY_USERNAME1 = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&username=mgr1-test"
-	KEYCLOAK_FIND_USERS_BY_USERNAME2 = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&username=eng1-test"
-	KEYCLOAK_FIND_USERS_BY_USERID1   = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&id=c2979a54-b50e-473a-8ff8-0710f701e64f"
-	KEYCLOAK_FIND_USERS_BY_USERID2   = "http://localhost:8080/admin/realms/master/users?q=org_id:rh&id=3c577a73-d15a-4130-968b-1fdab10e0ee0"
+	KEYCLOAK_FIND_USERS_BY_USERNAME1 = "http://localhost:8080/admin/realms/master/users?q=org_id%3Arh&username=mgr1-test"
+	KEYCLOAK_FIND_USERS_BY_USERNAME2 = "http://localhost:8080/admin/realms/master/users?q=org_id%3Arh&username=eng1-test"
+	KEYCLOAK_FIND_USERS_BY_USERID1   = "http://localhost:8080/admin/realms/master/users?id=c2979a54-b50e-473a-8ff8-0710f701e64f&q=org_id%3Arh"
+	KEYCLOAK_FIND_USERS_BY_USERID2   = "http://localhost:8080/admin/realms/master/users?id=3c577a73-d15a-4130-968b-1fdab10e0ee0&q=org_id%3Arh"
 )

@@ -2,10 +2,10 @@ package user_handles
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	tokenhandlers "userservice-go/handlers/token-handlers"
 	"userservice-go/types"
@@ -13,8 +13,15 @@ import (
 
 func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
 	var usersList []types.User
-	if len(findUsersCriteria.OrgId) == 0 || (len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0) {
-		return errors.New("unusable find users criteria"), usersList
+
+	if len(findUsersCriteria.OrgId) == 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
+		err, usersList := findAllUsers()
+		return err, usersList
+	}
+
+	if len(findUsersCriteria.OrgId) != 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
+		err, usersList := findUsersByOrgId(findUsersCriteria)
+		return err, usersList
 	}
 
 	if len(findUsersCriteria.Emails) > 0 {
@@ -31,17 +38,52 @@ func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) 
 	return nil, usersList
 }
 
-func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
+func findAllUsers() (error, []types.User) {
+	var usersList []types.User
+
+	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	log.Info().Msg(url)
+
+	err, users := executeGetUserHttpRequest(url)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return err, usersList
+	}
+	usersList = append(usersList, users...)
+
+	return nil, usersList
+}
+
+func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
 	var usersList []types.User
 
 	qPart := "q=org_id:" + findUsersCriteria.OrgId
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
+	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
+
+	err, users := executeGetUserHttpRequest(url)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return err, usersList
+	}
+	usersList = append(usersList, users...)
+	return nil, usersList
+}
+
+func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
+	var usersList []types.User
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	url, _ := url.Parse(hostPath)
+	queryParams := url.Query()
+	if len(findUsersCriteria.OrgId) > 0 {
+		queryParams.Set("q", "org_id:"+findUsersCriteria.OrgId)
+	}
 
 	for _, email := range findUsersCriteria.Emails {
-		if len(email) != 0 {
-			url := hostPath + "&" + "email=" + email
-			log.Info().Msg(url)
-			err, users := executeGetUserHttpRequest(url)
+		if len(email) > 0 {
+			queryParams.Set("email", email)
+			url.RawQuery = queryParams.Encode()
+			log.Info().Msg(url.String())
+			err, users := executeGetUserHttpRequest(url.String())
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList
@@ -54,15 +96,20 @@ func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []type
 
 func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
 	var usersList []types.User
-
-	qPart := "q=org_id:" + findUsersCriteria.OrgId
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	url, _ := url.Parse(hostPath)
+	queryParams := url.Query()
+	if len(findUsersCriteria.OrgId) > 0 {
+		queryParams.Set("q", "org_id:"+findUsersCriteria.OrgId)
+	}
 
 	for _, userName := range findUsersCriteria.Usernames {
 		if len(userName) != 0 {
-			url := hostPath + "&" + "username=" + userName
-			log.Info().Msg(url)
-			err, users := executeGetUserHttpRequest(url)
+			queryParams.Set("username", userName)
+			url.RawQuery = queryParams.Encode()
+
+			log.Info().Msg(url.String())
+			err, users := executeGetUserHttpRequest(url.String())
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList
@@ -75,15 +122,19 @@ func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []t
 
 func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
 	var usersList []types.User
-
-	qPart := "q=org_id:" + findUsersCriteria.OrgId
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	url, _ := url.Parse(hostPath)
+	queryParams := url.Query()
+	if len(findUsersCriteria.OrgId) > 0 {
+		queryParams.Set("q", "org_id:"+findUsersCriteria.OrgId)
+	}
 
 	for _, userId := range findUsersCriteria.UserIds {
 		if len(userId) != 0 {
-			url := hostPath + "&" + "id=" + userId
-			log.Info().Msg(url)
-			err, users := executeGetUserHttpRequest(url)
+			queryParams.Set("id", userId)
+			url.RawQuery = queryParams.Encode()
+			log.Info().Msg(url.String())
+			err, users := executeGetUserHttpRequest(url.String())
 			if err != nil {
 				log.Error().Msg(err.Error())
 				return err, usersList

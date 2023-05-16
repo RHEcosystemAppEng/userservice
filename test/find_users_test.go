@@ -17,10 +17,10 @@ func TestFindUsersNoParams(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
-func TestFindUsersNoFilterCriteria(t *testing.T) {
+func TestFindUsersWithOrgId(t *testing.T) {
 	r := SetUpRouter()
 	r.GET("/users", userroutes.GetUsersByUsersCriteria)
 
@@ -28,7 +28,7 @@ func TestFindUsersNoFilterCriteria(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestFindUsersByEmails(t *testing.T) {
