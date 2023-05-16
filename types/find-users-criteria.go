@@ -5,6 +5,7 @@ type FindUsersCriteria struct {
 	EmailsQueryArray    string `form:"emails"`
 	UserIdsQueryArray   string `form:"user_ids"`
 	UserNamesQueryArray string `form:"usernames"`
+	QueryLimit          int    `form:"limit" binding:"numeric,gte=1,max=1000"` // Max number of items to return
 
 	Emails []string
 

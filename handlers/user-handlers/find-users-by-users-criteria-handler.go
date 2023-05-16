@@ -13,29 +13,35 @@ import (
 
 func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
 	var usersList []types.User
-
+	var err error
 	if len(findUsersCriteria.OrgId) == 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
-		err, usersList := findAllUsers()
-		return err, usersList
-	}
-
-	if len(findUsersCriteria.OrgId) != 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
-		err, usersList := findUsersByOrgId(findUsersCriteria)
-		return err, usersList
-	}
-
-	if len(findUsersCriteria.Emails) > 0 {
-		err, usersList := findUsersByEmails(findUsersCriteria)
-		return err, usersList
+		err, usersList = findAllUsers()
+	} else if len(findUsersCriteria.OrgId) != 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
+		err, usersList = findUsersByOrgId(findUsersCriteria)
+	} else if len(findUsersCriteria.Emails) > 0 {
+		err, usersList = findUsersByEmails(findUsersCriteria)
 	} else if len(findUsersCriteria.Usernames) > 0 {
-		err, usersList := findUsersByUserNames(findUsersCriteria)
-		return err, usersList
+		err, usersList = findUsersByUserNames(findUsersCriteria)
 	} else if len(findUsersCriteria.UserIds) > 0 {
-		err, usersList := findUsersByUserIds(findUsersCriteria)
+		err, usersList = findUsersByUserIds(findUsersCriteria)
+	}
+
+	if err != nil {
+		log.Error().Msg(err.Error())
 		return err, usersList
 	}
+
+	usersList = limitResults(findUsersCriteria, usersList)
 
 	return nil, usersList
+}
+
+func limitResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
+	if findUsersCriteria.QueryLimit > 0 && len(usersList) > findUsersCriteria.QueryLimit {
+		return append(usersList[:findUsersCriteria.QueryLimit])
+	} else {
+		return usersList
+	}
 }
 
 func findAllUsers() (error, []types.User) {
