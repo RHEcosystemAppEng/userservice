@@ -2,6 +2,7 @@ package user_handles
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	"net/http"
@@ -31,7 +32,8 @@ func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) 
 		return err, usersList
 	}
 
-	usersList = limitResults(findUsersCriteria, usersList)
+	getPaginationObject(findUsersCriteria, usersList)
+	usersList = getPagedResults(findUsersCriteria, usersList)
 
 	return nil, usersList
 }
@@ -131,7 +133,6 @@ func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []typ
 		if len(userId) != 0 {
 			queryParams.Set("id", userId)
 			url.RawQuery = queryParams.Encode()
-			log.Info().Msg(url.String())
 			err, users := executeGetUserHttpRequest(url.String())
 			if err != nil {
 				log.Error().Msg(err.Error())
@@ -204,10 +205,64 @@ func processUserCustomAttributes(user types.User) types.User {
 	return user
 }
 
-func limitResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
-	if findUsersCriteria.QueryLimit > 0 && len(usersList) > findUsersCriteria.QueryLimit {
-		return append(usersList[:findUsersCriteria.QueryLimit])
-	} else {
-		return usersList
+func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []types.User) types.PaginationMeta {
+	totalUsers := len(usersList)
+	pageSize := findUsersCriteria.QueryLimit
+	currentIdx := findUsersCriteria.Offset
+
+	first := ""
+	previous := ""
+	next := ""
+	last := ""
+
+	if currentIdx > 0 {
+		first = "/users?offset=0&limit=" + string(findUsersCriteria.QueryLimit)
 	}
+
+	previousIdx := currentIdx - pageSize
+	if previousIdx >= 0 {
+		previous = "/users?offset=" + string(previousIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+	}
+
+	nextIdx := currentIdx + pageSize
+	if nextIdx < totalUsers && nextIdx >= pageSize {
+		next = "/users?offset=" + string(nextIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+	}
+
+	lastIdx := totalUsers - (totalUsers % pageSize) - 1
+	if lastIdx < totalUsers && currentIdx != lastIdx {
+		last = "/users?offset=" + string(lastIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+	}
+
+	paginationMeta := types.PaginationMeta{
+		Total:    int64(len(usersList)),
+		First:    first,
+		Previous: previous,
+		Next:     next,
+		Last:     last,
+	}
+
+	log.Debug().Msg((fmt.Sprintf("FindUsers Pagination: %+v\n", paginationMeta)))
+
+	return paginationMeta
+}
+
+func getPagedResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
+	totalUsers := len(usersList)
+	pageSize := findUsersCriteria.QueryLimit
+
+	beginIdx := findUsersCriteria.Offset
+	if beginIdx > totalUsers {
+		beginIdx = totalUsers - pageSize
+		if beginIdx < 0 {
+			beginIdx = 0
+		}
+	}
+
+	endIdx := beginIdx + pageSize
+	if endIdx > totalUsers {
+		endIdx = totalUsers
+	}
+
+	return usersList[beginIdx:endIdx]
 }
