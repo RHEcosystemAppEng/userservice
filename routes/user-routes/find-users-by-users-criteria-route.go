@@ -11,7 +11,7 @@ import (
 
 func GetUsersByUsersCriteria(c *gin.Context) {
 	var findUsersCriteria types.FindUsersCriteria
-	err := c.ShouldBindQuery(&findUsersCriteria)
+	err := c.Bind(&findUsersCriteria)
 	if err != nil {
 		error := &types.Error{Detail: err.Error(), Status: types.HTTP_CODE_BAD_REQUEST}
 		c.JSON(http.StatusBadRequest, error)

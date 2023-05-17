@@ -2,6 +2,7 @@ package test
 
 import (
 	httpmock "github.com/jarcoal/httpmock"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,11 @@ import (
 )
 
 func TestFindUsersNoParams(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	setupHttpMockForFindUsersNoParams()
+
 	r := SetUpRouter()
 	r.GET("/users", userroutes.GetUsersByUsersCriteria)
 
@@ -21,6 +27,11 @@ func TestFindUsersNoParams(t *testing.T) {
 }
 
 func TestFindUsersWithOrgId(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	setupHttpMockForFindUsersWithOrgId()
+
 	r := SetUpRouter()
 	r.GET("/users", userroutes.GetUsersByUsersCriteria)
 
@@ -44,6 +55,7 @@ func TestFindUsersByEmails(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+	log.Info().Msg(w.Body.String())
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -82,6 +94,18 @@ func TestFindUsersByUserIds(t *testing.T) {
 func setupHttpMockForGetToken() {
 	httpmock.RegisterResponder("POST", KEYCLOAK_GET_TOKEN_URL,
 		httpmock.NewStringResponder(200, KEYCLOAK_GET_TOKEN_RESPONSE))
+}
+
+func setupHttpMockForFindUsersNoParams() {
+	setupHttpMockForGetToken()
+	httpmock.RegisterResponder("GET", KEYCLOAK_FIND_USERS_NO_PARAMS,
+		httpmock.NewStringResponder(200, KEYCLOAK_USER_DATA1))
+}
+
+func setupHttpMockForFindUsersWithOrgId() {
+	setupHttpMockForGetToken()
+	httpmock.RegisterResponder("GET", KEYCLOAK_FIND_USERS_BY_ORG_ID,
+		httpmock.NewStringResponder(200, KEYCLOAK_USER_DATA1))
 }
 
 func setupHttpMockForFindUsersByEmail() {
