@@ -216,23 +216,25 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 	next := ""
 	last := ""
 
-	if currentIdx > 0 {
-		first = fmt.Sprintf("%s%d", "/users?offset=0&limit=", findUsersCriteria.QueryLimit)
-	}
+	if totalUsers > pageSize {
+		if currentIdx > 0 {
+			first = fmt.Sprintf("%s%d", "/users?offset=0&limit=", findUsersCriteria.QueryLimit)
+		}
 
-	previousIdx := currentIdx - pageSize
-	if previousIdx >= 0 {
-		previous = fmt.Sprintf("%s%d%s%d", "/users?offset=", previousIdx, "&limit=", findUsersCriteria.QueryLimit)
-	}
+		previousIdx := currentIdx - pageSize
+		if previousIdx >= 0 {
+			previous = fmt.Sprintf("%s%d%s%d", "/users?offset=", previousIdx, "&limit=", findUsersCriteria.QueryLimit)
+		}
 
-	nextIdx := currentIdx + pageSize
-	if nextIdx < totalUsers && nextIdx >= pageSize {
-		next = fmt.Sprintf("%s%d%s%d", "/users?offset=", nextIdx, "&limit=", findUsersCriteria.QueryLimit)
-	}
+		nextIdx := currentIdx + pageSize
+		if nextIdx < totalUsers && nextIdx >= pageSize {
+			next = fmt.Sprintf("%s%d%s%d", "/users?offset=", nextIdx, "&limit=", findUsersCriteria.QueryLimit)
+		}
 
-	lastIdx := totalUsers - (totalUsers % pageSize) - 1
-	if lastIdx < totalUsers && currentIdx != lastIdx {
-		last = fmt.Sprintf("%s%d%s%d", "/users?offset=", lastIdx, "&limit=", findUsersCriteria.QueryLimit)
+		lastIdx := totalUsers - (totalUsers % pageSize) - 1
+		if lastIdx < totalUsers && currentIdx != lastIdx {
+			last = fmt.Sprintf("%s%d%s%d", "/users?offset=", lastIdx, "&limit=", findUsersCriteria.QueryLimit)
+		}
 	}
 
 	paginationMeta := types.PaginationMeta{
@@ -249,25 +251,25 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 }
 
 func getPagedResults(findUsersCriteria types.FindUsersCriteria, usersList []types.UserOut, paginationMeta types.PaginationMeta) types.UserPagination {
+
+	returnUsersList := []types.UserOut{}
+
 	totalUsers := len(usersList)
 	pageSize := findUsersCriteria.QueryLimit
 
 	beginIdx := findUsersCriteria.Offset
-	if beginIdx > totalUsers {
-		beginIdx = totalUsers - pageSize
-		if beginIdx < 0 {
-			beginIdx = 0
-		}
-	}
-
 	endIdx := beginIdx + pageSize
 	if endIdx > totalUsers {
 		endIdx = totalUsers
 	}
 
+	if beginIdx >= 0 && beginIdx < totalUsers && beginIdx <= endIdx {
+		returnUsersList = usersList[beginIdx:endIdx]
+	}
+
 	userPagination := types.UserPagination{
 		Meta:  &paginationMeta,
-		Users: usersList[beginIdx:endIdx],
+		Users: returnUsersList,
 	}
 
 	return userPagination
