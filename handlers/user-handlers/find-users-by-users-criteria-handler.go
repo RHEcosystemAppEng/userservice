@@ -216,7 +216,7 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 	next := ""
 	last := ""
 
-	if totalUsers > pageSize {
+	if totalUsers > pageSize && pageSize > 0 {
 		if currentIdx > 0 {
 			first = fmt.Sprintf("%s%d", "/users?offset=0&limit=", findUsersCriteria.QueryLimit)
 		}
@@ -231,7 +231,7 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 			next = fmt.Sprintf("%s%d%s%d", "/users?offset=", nextIdx, "&limit=", findUsersCriteria.QueryLimit)
 		}
 
-		lastIdx := totalUsers - (totalUsers % pageSize) - 1
+		lastIdx := totalUsers - (totalUsers % pageSize)
 		if lastIdx < totalUsers && currentIdx != lastIdx {
 			last = fmt.Sprintf("%s%d%s%d", "/users?offset=", lastIdx, "&limit=", findUsersCriteria.QueryLimit)
 		}
