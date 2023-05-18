@@ -12,8 +12,9 @@ import (
 	"userservice-go/types"
 )
 
-func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
-	var usersList []types.User
+func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, types.UserPagination) {
+	var usersList []types.UserOut
+	var userPagination types.UserPagination
 	var err error
 	if len(findUsersCriteria.OrgId) == 0 && len(findUsersCriteria.Emails) == 0 && len(findUsersCriteria.UserIds) == 0 && len(findUsersCriteria.Usernames) == 0 {
 		err, usersList = findAllUsers()
@@ -29,17 +30,17 @@ func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, []types.User) 
 
 	if err != nil {
 		log.Error().Msg(err.Error())
-		return err, usersList
+		return err, userPagination
 	}
 
-	getPaginationObject(findUsersCriteria, usersList)
-	usersList = getPagedResults(findUsersCriteria, usersList)
+	paginationMeta := getPaginationObject(findUsersCriteria, usersList)
+	userPagination = getPagedResults(findUsersCriteria, usersList, paginationMeta)
 
-	return nil, usersList
+	return nil, userPagination
 }
 
-func findAllUsers() (error, []types.User) {
-	var usersList []types.User
+func findAllUsers() (error, []types.UserOut) {
+	var usersList []types.UserOut
 
 	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
 	log.Info().Msg(url)
@@ -54,8 +55,8 @@ func findAllUsers() (error, []types.User) {
 	return nil, usersList
 }
 
-func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
-	var usersList []types.User
+func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
+	var usersList []types.UserOut
 
 	qPart := "q=org_id:" + findUsersCriteria.OrgId
 	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
@@ -69,8 +70,8 @@ func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types
 	return nil, usersList
 }
 
-func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
-	var usersList []types.User
+func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
+	var usersList []types.UserOut
 	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
@@ -94,8 +95,8 @@ func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []type
 	return nil, usersList
 }
 
-func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
-	var usersList []types.User
+func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
+	var usersList []types.UserOut
 	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
@@ -120,8 +121,8 @@ func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []t
 	return nil, usersList
 }
 
-func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []types.User) {
-	var usersList []types.User
+func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
+	var usersList []types.UserOut
 	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
@@ -144,8 +145,8 @@ func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []typ
 	return nil, usersList
 }
 
-func executeGetUserHttpRequest(url string) (error, []types.User) {
-	var users []types.User
+func executeGetUserHttpRequest(url string) (error, []types.UserOut) {
+	var users []types.UserOut
 
 	err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodGet, url, nil)
 	if err != nil {
@@ -178,7 +179,7 @@ func executeGetUserHttpRequest(url string) (error, []types.User) {
 	return nil, users
 }
 
-func processUsersCustomAttributes(users []types.User) []types.User {
+func processUsersCustomAttributes(users []types.UserOut) []types.UserOut {
 	for i, user := range users {
 		users[i] = processUserCustomAttributes(user)
 	}
@@ -186,7 +187,7 @@ func processUsersCustomAttributes(users []types.User) []types.User {
 	return users
 }
 
-func processUserCustomAttributes(user types.User) types.User {
+func processUserCustomAttributes(user types.UserOut) types.UserOut {
 	if len(user.Attributes["is_internal"]) > 0 {
 		isInternal := user.Attributes["is_internal"]
 		user.IsInternal, _ = strconv.ParseBool(isInternal[0])
@@ -205,7 +206,7 @@ func processUserCustomAttributes(user types.User) types.User {
 	return user
 }
 
-func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []types.User) types.PaginationMeta {
+func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []types.UserOut) types.PaginationMeta {
 	totalUsers := len(usersList)
 	pageSize := findUsersCriteria.QueryLimit
 	currentIdx := findUsersCriteria.Offset
@@ -216,22 +217,22 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 	last := ""
 
 	if currentIdx > 0 {
-		first = "/users?offset=0&limit=" + string(findUsersCriteria.QueryLimit)
+		first = fmt.Sprintf("%s%d", "/users?offset=0&limit=", findUsersCriteria.QueryLimit)
 	}
 
 	previousIdx := currentIdx - pageSize
 	if previousIdx >= 0 {
-		previous = "/users?offset=" + string(previousIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+		previous = fmt.Sprintf("%s%d%s%d", "/users?offset=", previousIdx, "&limit=", findUsersCriteria.QueryLimit)
 	}
 
 	nextIdx := currentIdx + pageSize
 	if nextIdx < totalUsers && nextIdx >= pageSize {
-		next = "/users?offset=" + string(nextIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+		next = fmt.Sprintf("%s%d%s%d", "/users?offset=", nextIdx, "&limit=", findUsersCriteria.QueryLimit)
 	}
 
 	lastIdx := totalUsers - (totalUsers % pageSize) - 1
 	if lastIdx < totalUsers && currentIdx != lastIdx {
-		last = "/users?offset=" + string(lastIdx) + "&limit=" + string(findUsersCriteria.QueryLimit)
+		last = fmt.Sprintf("%s%d%s%d", "/users?offset=", lastIdx, "&limit=", findUsersCriteria.QueryLimit)
 	}
 
 	paginationMeta := types.PaginationMeta{
@@ -247,7 +248,7 @@ func getPaginationObject(findUsersCriteria types.FindUsersCriteria, usersList []
 	return paginationMeta
 }
 
-func getPagedResults(findUsersCriteria types.FindUsersCriteria, usersList []types.User) []types.User {
+func getPagedResults(findUsersCriteria types.FindUsersCriteria, usersList []types.UserOut, paginationMeta types.PaginationMeta) types.UserPagination {
 	totalUsers := len(usersList)
 	pageSize := findUsersCriteria.QueryLimit
 
@@ -264,5 +265,10 @@ func getPagedResults(findUsersCriteria types.FindUsersCriteria, usersList []type
 		endIdx = totalUsers
 	}
 
-	return usersList[beginIdx:endIdx]
+	userPagination := types.UserPagination{
+		Meta:  &paginationMeta,
+		Users: usersList[beginIdx:endIdx],
+	}
+
+	return userPagination
 }

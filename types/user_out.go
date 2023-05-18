@@ -28,4 +28,7 @@ type UserOut struct {
 	OrgId string `json:"org_id,omitempty"`
 
 	Type_ string `json:"type,omitempty"`
+
+	// Added in addition to OpenAPI spec
+	Attributes map[string][]string `json:"attributes,omitempty"`
 }
