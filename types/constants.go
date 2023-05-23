@@ -20,6 +20,14 @@ var (
 	EMAILS_PARAM     = "emails"
 	USER_IDS_PARAM   = "user_ids"
 
+	ORDER_BY_EMAIL    = "email"
+	ORDER_BY_USERNAME = "username"
+	ORDER_BY_MODIFIED = "modified"
+	ORDER_BY_CREATED  = "created"
+
+	ORDER_BY_DIR_ASC  = "asc"
+	ORDER_BY_DIR_DESC = "desc"
+
 	// http codes
 	HTTP_CODE_BAD_REQUEST = "400"
 

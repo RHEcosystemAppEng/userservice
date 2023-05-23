@@ -1,6 +1,7 @@
 package user_routes
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -17,6 +18,8 @@ func GetUsersByUsersCriteria(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, error)
 		return
 	}
+
+	log.Debug().Msg((fmt.Sprintf("FindUsers Pagination: %+v\n", findUsersCriteria)))
 
 	if len(findUsersCriteria.UserIdsQueryArray) != 0 {
 		findUsersCriteria.UserIds = strings.Split(findUsersCriteria.UserIdsQueryArray, ",")

@@ -33,10 +33,44 @@ func FindUsers(findUsersCriteria types.FindUsersCriteria) (error, types.UserPagi
 		return err, userPagination
 	}
 
+	usersList = sortUsersList(findUsersCriteria, usersList)
 	paginationMeta := getPaginationObject(findUsersCriteria, usersList)
 	userPagination = getPagedResults(findUsersCriteria, usersList, paginationMeta)
 
 	return nil, userPagination
+}
+
+func sortUsersList(findUsersCriteria types.FindUsersCriteria, usersList []types.UserOut) []types.UserOut {
+	switch findUsersCriteria.OrderBy {
+	case types.ORDER_BY_EMAIL:
+		if findUsersCriteria.OrderDirection == types.ORDER_BY_DIR_ASC {
+			return SortByEmail(usersList, true)
+		} else {
+			return SortByEmail(usersList, false)
+		}
+	case types.ORDER_BY_USERNAME:
+		if findUsersCriteria.OrderDirection == types.ORDER_BY_DIR_ASC {
+			return SortByUserName(usersList, true)
+		} else {
+			return SortByUserName(usersList, false)
+		}
+	case types.ORDER_BY_CREATED:
+		if findUsersCriteria.OrderDirection == types.ORDER_BY_DIR_ASC {
+			return SortByCreatedAt(usersList, true)
+		} else {
+			return SortByCreatedAt(usersList, false)
+		}
+	case types.ORDER_BY_MODIFIED:
+		if findUsersCriteria.OrderDirection == types.ORDER_BY_DIR_ASC {
+			return SortByModifiedAt(usersList, true)
+		} else {
+			return SortByModifiedAt(usersList, false)
+		}
+	default:
+		log.Debug().Msg("Invalid order by parameter for find users, ignoring sorting the results.")
+	}
+
+	return usersList
 }
 
 func findAllUsers() (error, []types.UserOut) {
