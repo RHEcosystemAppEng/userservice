@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 	tokenhandlers "userservice-go/handlers/token-handlers"
 	"userservice-go/types"
 )
@@ -235,6 +236,24 @@ func processUserCustomAttributes(user types.UserOut) types.UserOut {
 	if len(user.Attributes["type"]) > 0 {
 		userType := user.Attributes["type"]
 		user.Type_ = userType[0]
+	}
+
+	if len(user.Attributes["created"]) > 0 {
+		created := user.Attributes["created"]
+		i, err := strconv.ParseInt(created[0], 10, 64)
+		if err == nil {
+			tm := time.Unix(i, 0)
+			user.Created = tm
+		}
+	}
+
+	if len(user.Attributes["modified"]) > 0 {
+		created := user.Attributes["modified"]
+		i, err := strconv.ParseInt(created[0], 10, 64)
+		if err == nil {
+			tm := time.Unix(i, 0)
+			user.Modified = tm
+		}
 	}
 
 	return user

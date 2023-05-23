@@ -19,13 +19,11 @@ var username = func(u1, u2 *types.UserOut) bool {
 }
 
 var createdAt = func(u1, u2 *types.UserOut) bool {
-	// TBD: Comparison of createdAt
-	return true
+	return u1.Created.Unix() < u2.Created.Unix()
 }
 
 var modifiedAt = func(u1, u2 *types.UserOut) bool {
-	// TBD: Comparison of modifiedAt
-	return true
+	return u1.Modified.Unix() < u2.Modified.Unix()
 }
 
 var byDecreasingEmail = func(u1, u2 *types.UserOut) bool {
@@ -37,13 +35,11 @@ var byDecreasingUsername = func(u1, u2 *types.UserOut) bool {
 }
 
 var byDecreasingCreatedAt = func(u1, u2 *types.UserOut) bool {
-	// TBD: Comparison of createdAt
-	return true
+	return u2.Created.Unix() < u1.Created.Unix()
 }
 
 var byDecreasingModifiedAt = func(u1, u2 *types.UserOut) bool {
-	// TBD: Comparison of modifiedAt
-	return true
+	return u2.Modified.Unix() < u1.Modified.Unix()
 }
 
 // Sort is a method on the function type, By, that sorts the argument slice according to the function.
