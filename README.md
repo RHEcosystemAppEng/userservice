@@ -129,3 +129,4 @@ docker run -p 8000:8000 userservice
 ## Using different environment variables with .env files
 * Currently the .env file is used for running the userservice locally on the host machine.
 * .env.docker file is used for running the userservice in docker on the host machine with Keycloak service.
+* Setting `KEYCLOAK_ACCESS_TOKEN_PUBLIC_KEY` property: This should be the public key used to get generate the JWT token. You can get this from keycloak at this path - Login to keycloak with admin privileges --> Go to the realm --> Realm settings --> keys tab --> By default JWT generations uses RS256, but you need to pick correct algorithm --> click on public key -- Copy and update the .env file. You can find default signature algorithm under realm settings --> tokens tab --> General section --> Default Signature Algorithm 
