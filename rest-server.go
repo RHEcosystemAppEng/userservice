@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"userservice-go/middlewares"
 	tokenroutes "userservice-go/routes/token-routes"
 	userroutes "userservice-go/routes/user-routes"
 	"userservice-go/types"
@@ -15,7 +16,7 @@ func InitializeAndStartServer() {
 }
 
 func initializeRoutes(server gin.Engine) {
-	server.GET("/users", userroutes.GetUsersByUsersCriteria)
+	server.GET("/users", middlewares.AuthMiddleware, userroutes.GetUsersByUsersCriteria)
 	server.POST("/token", tokenroutes.GetTokenWithPasswordGrant)
 }
 
