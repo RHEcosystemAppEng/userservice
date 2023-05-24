@@ -33,4 +33,8 @@ var (
 
 	// Error messages
 	ERR_NIL_HTTP_CLIENT_OR_REQUEST = "nil http request or http client object"
+
+	RUN_ON_LOCAL           = "local"
+	RUN_ON_OPENSHIFT_LOCAL = "openshift.local"
+	RUN_ON_DOCKER          = "docker"
 )

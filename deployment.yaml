@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: userservice
+  name: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+        - image: quay.io/rhkp/userservice:v0.0.1
+          imagePullPolicy: Always
+          name: userservice
+          ports:
+            - containerPort: 8000
