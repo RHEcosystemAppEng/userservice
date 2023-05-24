@@ -58,6 +58,15 @@ paths:
               - username
               - modified
               - created
+        - in: query
+          name: direction
+          required: false
+          description: Used only when order parameter is specified. # Recommended by AppEng
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
       responses:
         '200':
           description: A paginated list of users
