@@ -2,17 +2,18 @@ package types
 
 var (
 	// Default environment variables, values will be replaced with .env file
-	KEYCLOAK_BACKEND_URL          = "http://localhost:8080/"
-	ADMIN_USER                    = "admin"
-	ADMIN_PASSWORD                = "admin"
-	GRANT_TYPE                    = "password"
-	CLIENT_ID                     = "admin-cli"
-	KEYCLOAK_REALM                = "master"
-	KEYCLOAK_MASTER_REALM_TOKEN   = ""
-	KEYCLOAK_TOKEN_PATH           = "realms/master/protocol/openid-connect/token"
-	KEYCLOAK_GET_BY_USERNAME_PATH = "admin/realms/master/users?username="
-	KEYCLOAK_GET_BY_USERS         = "admin/realms/master/users"
-	USER_SERVICE_PORT             = ":8000"
+	KEYCLOAK_BACKEND_URL               = "http://localhost:8080/"
+	ADMIN_USER                         = "admin"
+	ADMIN_PASSWORD                     = "admin"
+	GRANT_TYPE                         = "password"
+	CLIENT_ID                          = "admin-cli"
+	KEYCLOAK_REALM                     = "master"
+	KEYCLOAK_MASTER_REALM_TOKEN        = ""
+	KEYCLOAK_TOKEN_PATH                = "realms/master/protocol/openid-connect/token"
+	KEYCLOAK_GET_BY_USERNAME_PATH      = "admin/realms/master/users?username="
+	KEYCLOAK_GET_BY_USERS              = "admin/realms/master/users"
+	USER_SERVICE_PORT                  = ":8000"
+	DISABLE_KEYCLOAK_CERT_VERIFICATION = "false"
 
 	USERNAME_PARAM   = "username"
 	ORG_ID_PARAM     = "org_id"
@@ -36,5 +37,6 @@ var (
 
 	RUN_ON_LOCAL           = "local"
 	RUN_ON_OPENSHIFT_LOCAL = "openshift.local"
+	RUN_ON_OPENSHIFT_DEV   = "openshift.dev"
 	RUN_ON_DOCKER          = "docker"
 )

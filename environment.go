@@ -18,6 +18,8 @@ func LoadEnvVars() {
 	case types.RUN_ON_DOCKER:
 		fallthrough
 	case types.RUN_ON_OPENSHIFT_LOCAL:
+		fallthrough
+	case types.RUN_ON_OPENSHIFT_DEV:
 		envFileName = envFileName + "." + runOn
 	}
 
@@ -39,6 +41,7 @@ func LoadEnvVars() {
 		types.KEYCLOAK_TOKEN_PATH = os.ExpandEnv(types.KEYCLOAK_TOKEN_PATH)
 		types.KEYCLOAK_GET_BY_USERNAME_PATH = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERNAME_PATH)
 		types.KEYCLOAK_GET_BY_USERS = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERS)
+		types.DISABLE_KEYCLOAK_CERT_VERIFICATION = os.Getenv("DISABLE_KEYCLOAK_CERT_VERIFICATION")
 		log.Debug().Msg("Loaded environment variables from: " + envFileName)
 	}
 }
