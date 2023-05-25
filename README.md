@@ -115,15 +115,15 @@ curl --location 'http://localhost:8000/users?org_id=rh&emails=1%401.com%2C2%402.
 curl --location 'http://localhost:8000/users?org_id=rh&user_ids=c2979a54-b50e-473a-8ff8-0710f701e64f%2C3c577a73-d15a-4130-968b-1fdab10e0ee0'
 ```
 
-## Docker Tasks
+## Docker Tasks using Makefile
 * Build userservice Docker image
 ```shell
-docker build --rm --tag userservice .
+make docker-build
 ```
 
-* Run userservice Docker image on port 8000
+* Push userservice Docker image
 ```shell
-docker run -p 8000:8000 userservice
+make docker-push
 ```
 
 ## Using different environment variables with .env files

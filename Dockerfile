@@ -11,7 +11,7 @@ RUN go mod download
 COPY main.go main.go
 COPY environment.go environment.go
 COPY rest-server.go rest-server.go
-COPY .env.openshift.local .env
+COPY .env.openshift.dev .env
 
 COPY handlers handlers/
 COPY middlewares middlewares/
