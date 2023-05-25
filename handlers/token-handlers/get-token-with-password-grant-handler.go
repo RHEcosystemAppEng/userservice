@@ -1,15 +1,34 @@
 package token_handlers
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	log "github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
+	"strconv"
 	"userservice-go/types"
 )
+
+func getHttpClient() http.Client {
+	transport := &http.Transport{}
+
+	if len(types.DISABLE_KEYCLOAK_CERT_VERIFICATION) > 0 {
+		disableTlsCertVerification, _ := strconv.ParseBool(types.DISABLE_KEYCLOAK_CERT_VERIFICATION)
+		if disableTlsCertVerification {
+			transport = &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+			log.Debug().Msg("http client skipped certificate verification")
+		}
+	} else {
+		log.Debug().Msg("http client enabled certificate verification")
+	}
+
+	return http.Client{Transport: transport}
+}
 
 func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFormBody) (error, types.Token) {
 	var token types.Token
@@ -20,20 +39,32 @@ func GetTokenWithPasswordGrantHandler(tokenRequestFormBody types.TokenRequestFor
 	data.Set("client_id", tokenRequestFormBody.Client_id)
 	data.Set("grant_type", tokenRequestFormBody.Grant_type)
 
-	response, err := http.Post(types.KEYCLOAK_BACKEND_URL+types.KEYCLOAK_TOKEN_PATH, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_TOKEN_PATH
 
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return err, token
-	}
-
-	if response.StatusCode == http.StatusOK {
-		responseData, err := ioutil.ReadAll(response.Body)
+	client := getHttpClient()
+	if &client != nil {
+		response, err := client.PostForm(url, data)
 		if err != nil {
 			log.Error().Msg(err.Error())
 			return err, token
 		}
-		json.Unmarshal(responseData, &token)
+
+		if response.StatusCode == http.StatusOK {
+			responseData, err := ioutil.ReadAll(response.Body)
+
+			if err != nil {
+				log.Error().Msg(err.Error())
+				return err, token
+			}
+			err = json.Unmarshal(responseData, &token)
+			if err != nil {
+				log.Error().Msg(err.Error())
+				return err, token
+			}
+		} else {
+			responseData, _ := ioutil.ReadAll(response.Body)
+			log.Debug().Msg("Unsuccessful getting token response from " + url + " " + string(responseData))
+		}
 	}
 	return nil, token
 }
@@ -63,5 +94,6 @@ func GetHttpClientAndRequestWithToken(httpMethod string, url string, body io.Rea
 
 	var bearer = "Bearer " + token.AccessToken
 	req.Header.Set("Authorization", bearer)
-	return nil, req, &http.Client{}
+	client := getHttpClient()
+	return nil, req, &client
 }

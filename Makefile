@@ -1,5 +1,10 @@
 ## Adapted from https://gist.github.com/thomaspoignant/5b72d579bd5f311904d973652180c705
 BINARY_NAME=userservice
+VERSION ?= 0.0.1
+IMG_NAME ?= $(BINARY_NAME):v$(VERSION)
+REGISTRY ?= quay.io
+REGISTRY_REPO ?= rhkp
+IMAGE_TAG ?= $(REGISTRY)/$(REGISTRY_REPO)/${IMG_NAME}
 
 .PHONY: all
 
@@ -20,4 +25,7 @@ tests: ## Run the tests of the project
 
 ## Docker:
 docker-build: ## Use the dockerfile to build the container
-	docker build --rm --tag $(BINARY_NAME) .
+	docker build --platform linux/amd64 --tag $(IMAGE_TAG) .
+
+docker-push: ## push the image
+	docker push $(IMAGE_TAG)

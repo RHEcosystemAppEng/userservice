@@ -4,14 +4,28 @@ import (
 	"github.com/joho/godotenv"
 	log "github.com/rs/zerolog/log"
 	"os"
+	"strings"
 	"userservice-go/types"
 )
 
 // LoadEnvVars Loads environment variables
 func LoadEnvVars() {
-	err := godotenv.Load()
+	runOn := strings.ToLower(os.Getenv("RUN_USER_SERVICE_ON"))
+	var err error
+	var envFileName = ".env" // also servers purpose for local environment
+
+	switch runOn {
+	case types.RUN_ON_DOCKER:
+		fallthrough
+	case types.RUN_ON_OPENSHIFT_LOCAL:
+		fallthrough
+	case types.RUN_ON_OPENSHIFT_DEV:
+		envFileName = envFileName + "." + runOn
+	}
+
+	err = godotenv.Load(envFileName)
 	if err != nil {
-		log.Error().Msg("Error loading .env file, will fallback to default environment variables. " + err.Error())
+		log.Error().Msg("Error loading .env file:" + envFileName + ", will fallback to default environment variables. " + err.Error())
 	} else {
 		types.USER_SERVICE_PORT = os.Getenv("USER_SERVICE_PORT")
 		types.KEYCLOAK_BACKEND_URL = os.Getenv("KEYCLOAK_BACKEND_URL")
@@ -27,6 +41,7 @@ func LoadEnvVars() {
 		types.KEYCLOAK_TOKEN_PATH = os.ExpandEnv(types.KEYCLOAK_TOKEN_PATH)
 		types.KEYCLOAK_GET_BY_USERNAME_PATH = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERNAME_PATH)
 		types.KEYCLOAK_GET_BY_USERS = os.ExpandEnv(types.KEYCLOAK_GET_BY_USERS)
-		log.Info().Msg("Loaded environment variables")
+		types.DISABLE_KEYCLOAK_CERT_VERIFICATION = os.Getenv("DISABLE_KEYCLOAK_CERT_VERIFICATION")
+		log.Debug().Msg("Loaded environment variables from: " + envFileName)
 	}
 }
