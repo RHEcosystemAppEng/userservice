@@ -17,9 +17,9 @@ type UserOut struct {
 
 	Email string `json:"email"`
 
-	FirstName string `json:"first_name"`
+	FirstName string `json:"firstName"`
 
-	LastName string `json:"last_name"`
+	LastName string `json:"lastName"`
 
 	OrgAdmin bool `json:"org_admin"`
 
