@@ -11,24 +11,24 @@ type UserOut struct {
 
 	Modified time.Time `json:"modified"`
 
-	UserId string `json:"user_id,omitempty"`
+	UserId string `json:"user_id"`
 
-	Username string `json:"username,omitempty"`
+	Username string `json:"username"`
 
-	Email string `json:"email,omitempty"`
+	Email string `json:"email"`
 
-	FirstName string `json:"first_name,omitempty"`
+	FirstName string `json:"first_name"`
 
-	LastName string `json:"last_name,omitempty"`
+	LastName string `json:"last_name"`
 
-	OrgAdmin bool `json:"org_admin,omitempty"`
+	OrgAdmin bool `json:"org_admin"`
 
-	IsInternal bool `json:"is_internal,omitempty"`
+	IsInternal bool `json:"is_internal"`
 
-	OrgId string `json:"org_id,omitempty"`
+	OrgId string `json:"org_id"`
 
-	Type_ string `json:"type,omitempty"`
+	Type_ string `json:"type"`
 
 	// Added in addition to OpenAPI spec
-	Attributes map[string][]string `json:"attributes,omitempty"`
+	Attributes map[string][]string `json:"attributes"`
 }

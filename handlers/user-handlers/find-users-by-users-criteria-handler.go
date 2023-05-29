@@ -238,6 +238,11 @@ func processUserCustomAttributes(user types.UserOut) types.UserOut {
 		user.Type_ = userType[0]
 	}
 
+	if len(user.Attributes["org_id"]) > 0 {
+		orgId := user.Attributes["org_id"]
+		user.OrgId = orgId[0]
+	}
+
 	if len(user.Attributes["created"]) > 0 {
 		created := user.Attributes["created"]
 		i, err := strconv.ParseInt(created[0], 10, 64)
