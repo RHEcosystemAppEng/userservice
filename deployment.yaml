@@ -2,21 +2,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: userservice
-  name: userservice
+    app: keycloak-user-service
+  name: keycloak-user-service
+  namespace: fips-test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: userservice
+      app: keycloak-user-service
   template:
     metadata:
       labels:
-        app: userservice
+        app: keycloak-user-service
     spec:
       containers:
-        - image: quay.io/rhkp/userservice:v0.0.1
-          imagePullPolicy: Always
-          name: userservice
-          ports:
-            - containerPort: 8000
+      - image: quay.io/rhkp/keycloak-user-service:v0.0.1
+        imagePullPolicy: Always
+        name: keycloak-user-service
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: internal-service-cert-volume
+            mountPath: /etc/certs
+            readOnly: true
+      volumes:
+        - name: internal-service-cert-volume
+          secret:
+            secretName: keycloak-user-service

@@ -12,6 +12,11 @@ COPY main.go main.go
 COPY environment.go environment.go
 COPY rest-server.go rest-server.go
 COPY .env.openshift.dev .env
+COPY signercert.pem signercert.pem
+
+#Todo: be removed
+COPY keycloak.openshift.dev.pem keycloak.openshift.dev.pem
+
 
 COPY handlers handlers/
 COPY middlewares middlewares/
@@ -19,14 +24,18 @@ COPY routes routes/
 COPY types types/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o userservice .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o keycloak-user-service .
 
 # Build the operator image
 FROM registry.access.redhat.com/ubi8-minimal:8.7
 
 WORKDIR /
-COPY --from=builder /opt/app-root/src/userservice .
+COPY --from=builder /opt/app-root/src/keycloak-user-service .
 COPY --from=builder /opt/app-root/src/.env .
-USER 65532:65532
+COPY --from=builder /opt/app-root/src/signercert.pem .
 
-ENTRYPOINT ["/userservice"]
+#todo: remove this line
+COPY --from=builder /opt/app-root/src/keycloak.openshift.dev.pem .
+
+USER 65532:65532
+ENTRYPOINT ["/keycloak-user-service"]
