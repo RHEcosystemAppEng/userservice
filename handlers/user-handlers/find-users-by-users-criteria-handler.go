@@ -77,7 +77,7 @@ func sortUsersList(findUsersCriteria types.FindUsersCriteria, usersList []types.
 func findAllUsers() (error, []types.UserOut) {
 	var usersList []types.UserOut
 
-	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI
 	log.Info().Msg(url)
 
 	err, users := executeGetUserHttpRequest(url)
@@ -94,7 +94,7 @@ func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types
 	var usersList []types.UserOut
 
 	qPart := "q=org_id:" + findUsersCriteria.OrgId
-	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS + "?" + qPart
+	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI + "?" + qPart
 
 	err, users := executeGetUserHttpRequest(url)
 	if err != nil {
@@ -107,7 +107,7 @@ func findUsersByOrgId(findUsersCriteria types.FindUsersCriteria) (error, []types
 
 func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
 	var usersList []types.UserOut
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
 	if len(findUsersCriteria.OrgId) > 0 {
@@ -132,7 +132,7 @@ func findUsersByEmails(findUsersCriteria types.FindUsersCriteria) (error, []type
 
 func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
 	var usersList []types.UserOut
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
 	if len(findUsersCriteria.OrgId) > 0 {
@@ -158,7 +158,7 @@ func findUsersByUserNames(findUsersCriteria types.FindUsersCriteria) (error, []t
 
 func findUsersByUserIds(findUsersCriteria types.FindUsersCriteria) (error, []types.UserOut) {
 	var usersList []types.UserOut
-	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_GET_BY_USERS
+	hostPath := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI
 	url, _ := url.Parse(hostPath)
 	queryParams := url.Query()
 	if len(findUsersCriteria.OrgId) > 0 {

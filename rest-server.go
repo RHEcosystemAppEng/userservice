@@ -50,6 +50,8 @@ func addCORSHeaders(c *gin.Context) {
 
 func initializeRoutes(server gin.Engine) {
 	server.GET("/users", addCORSHeaders, userroutes.GetUsersByUsersCriteria)
+	server.PUT("/user/:id/activate", addCORSHeaders, userroutes.ActivateUser)
+	server.PUT("/user/:id/deactivate", addCORSHeaders, userroutes.DeactivateUser)
 	server.POST("/token", addCORSHeaders, tokenroutes.GetTokenWithPasswordGrant)
 }
 

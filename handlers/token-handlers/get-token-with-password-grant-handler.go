@@ -33,11 +33,11 @@ func getHttpClient() http.Client {
 		}
 
 		log.Debug().Msg("http client enabled certificate verification")
-		// cacerts := getCACertPool()
+		cacerts := getCACertPool()
 		certs := getUserServiceCerts()
 
 		config := &tls.Config{
-			// RootCAs:      cacerts,
+			RootCAs:      cacerts,
 			Certificates: []tls.Certificate{certs},
 		}
 
@@ -47,10 +47,10 @@ func getHttpClient() http.Client {
 }
 
 func getUserServiceCerts() tls.Certificate {
-	cert, err := tls.LoadX509KeyPair("/etc/certs/tls.crt", "/etc/certs/tls.key") // todo: use env vars
+	cert, err := tls.LoadX509KeyPair(types.USER_SERVICE_TLS_CRT_PATH, types.USER_SERVICE_TLS_KEY_PATH) // todo: use env vars
 
 	if err != nil {
-		log.Error().Msg("Error reading user service certificates")
+		log.Error().Msg("Error reading user service certificates " + err.Error())
 	}
 	log.Debug().Msg("Returning user service certificates")
 	return cert
@@ -129,7 +129,7 @@ func GetKeycloakToken() (error, types.Token) {
 }
 
 func GetHttpClientAndRequestWithToken(httpMethod string, url string, body io.Reader) (error, *http.Request, *http.Client) {
-	req, err := http.NewRequest(http.MethodGet, url, body)
+	req, err := http.NewRequest(httpMethod, url, body)
 	if err != nil {
 		log.Error().Msg(err.Error())
 		return err, nil, nil

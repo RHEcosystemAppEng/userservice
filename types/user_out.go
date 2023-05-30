@@ -5,7 +5,7 @@ import (
 )
 
 type UserOut struct {
-	Uuid string `json:"uuid"`
+	Uuid string `json:"id"`
 
 	Created time.Time `json:"created"`
 
@@ -31,4 +31,5 @@ type UserOut struct {
 
 	// Added in addition to OpenAPI spec
 	Attributes map[string][]string `json:"attributes"`
+	Enabled    bool                `json:"enabled"`
 }

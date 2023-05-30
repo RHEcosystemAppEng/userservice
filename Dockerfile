@@ -11,6 +11,7 @@ RUN go mod download
 COPY main.go main.go
 COPY rest-server.go rest-server.go
 COPY .env.openshift.dev .env
+COPY signercert.pem signercert.pem
 
 COPY handlers handlers/
 COPY middlewares middlewares/
@@ -26,6 +27,7 @@ FROM registry.access.redhat.com/ubi8-minimal:8.7
 
 WORKDIR /
 COPY --from=builder /opt/app-root/src/keycloak-user-service .
+COPY --from=builder /opt/app-root/src/signercert.pem .
 COPY --from=builder /opt/app-root/src/.env .
 
 USER 65532:65532

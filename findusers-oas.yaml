@@ -7,6 +7,54 @@ tags:
   - name: Users
     description: Operations on users
 paths:
+  /user/:id/activate:
+    put:
+      tags:
+        - Users
+      summary: Activate a user
+      description: Activate a user
+      operationId: activateUser
+      responses:
+        '204':
+          description: A successfully activated user
+        '401':
+          description: Unauthorized
+        '403':
+          description: Insufficient permissions to list users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '500':
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/:id/deactivate:
+    put:
+      tags:
+        - Users
+      summary: Deactivate a user
+      description: Deactivate a user
+      operationId: deactivateUser
+      responses:
+        '204':
+          description: A successfully activated user
+        '401':
+          description: Unauthorized
+        '403':
+          description: Insufficient permissions to list users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '500':
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /users/:
     get:
       tags:
