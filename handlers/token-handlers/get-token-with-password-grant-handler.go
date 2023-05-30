@@ -9,35 +9,41 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"userservice-go/types"
 )
 
 func getHttpClient() http.Client {
-	transport := &http.Transport{}
+	if run := os.Getenv("UNIT_TEST_RUN"); run != "" {
+		log.Debug().Msg("Returning http.Client for unit tests")
+		return http.Client{}
+	} else {
+		transport := &http.Transport{}
 
-	if len(types.DISABLE_KEYCLOAK_CERT_VERIFICATION) > 0 {
-		disableTlsCertVerification, _ := strconv.ParseBool(types.DISABLE_KEYCLOAK_CERT_VERIFICATION)
-		if disableTlsCertVerification {
-			transport = &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		if len(types.DISABLE_KEYCLOAK_CERT_VERIFICATION) > 0 {
+			disableTlsCertVerification, _ := strconv.ParseBool(types.DISABLE_KEYCLOAK_CERT_VERIFICATION)
+			if disableTlsCertVerification {
+				transport = &http.Transport{
+					TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+				}
+				log.Debug().Msg("http client skipped certificate verification")
+				return http.Client{Transport: transport}
 			}
-			log.Debug().Msg("http client skipped certificate verification")
-			return http.Client{Transport: transport}
 		}
+
+		log.Debug().Msg("http client enabled certificate verification")
+		// cacerts := getCACertPool()
+		certs := getUserServiceCerts()
+
+		config := &tls.Config{
+			// RootCAs:      cacerts,
+			Certificates: []tls.Certificate{certs},
+		}
+
+		transport = &http.Transport{TLSClientConfig: config}
+		return http.Client{Transport: transport}
 	}
-
-	log.Debug().Msg("http client enabled certificate verification")
-	// cacerts := getCACertPool()
-	certs := getUserServiceCerts()
-
-	config := &tls.Config{
-		// RootCAs:      cacerts,
-		Certificates: []tls.Certificate{certs},
-	}
-
-	transport = &http.Transport{TLSClientConfig: config}
-	return http.Client{Transport: transport}
 }
 
 func getUserServiceCerts() tls.Certificate {

@@ -9,7 +9,6 @@ RUN go mod download
 
 # Copy the go source
 COPY main.go main.go
-COPY environment.go environment.go
 COPY rest-server.go rest-server.go
 COPY .env.openshift.dev .env
 
@@ -17,6 +16,7 @@ COPY handlers handlers/
 COPY middlewares middlewares/
 COPY routes routes/
 COPY types types/
+COPY env env/
 
 # Build
 RUN GOOS=linux GOARCH=amd64 go build -a -o keycloak-user-service .
