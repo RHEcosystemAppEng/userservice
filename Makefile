@@ -25,7 +25,7 @@ tests: ## Run the tests of the project
 
 ## Docker:
 docker-build: ## Use the dockerfile to build the container
-	docker build --progress=plain --platform linux/amd64 --tag $(IMAGE_TAG) .
+	docker build --progress=plain --no-cache --platform linux/amd64 --tag $(IMAGE_TAG) .
 
 docker-push: ## push the image
 	docker push $(IMAGE_TAG)
