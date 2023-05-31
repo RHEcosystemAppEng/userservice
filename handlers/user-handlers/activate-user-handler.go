@@ -16,22 +16,22 @@ func ActivateUser(id string, activate bool) error {
 	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI + "/" + id
 	log.Info().Msg("Activating user on: " + url + " with value: " + strconv.FormatBool(activate))
 
-	user := types.ActivateUser{Enabled: strconv.FormatBool(activate)}
+	userActivation := types.ActivateUser{Enabled: strconv.FormatBool(activate)}
 
 	// Add approved custom attribute to the user if needed while activating
 	if activate {
 		_, hasGroupApprovedAttribute := userGroupHasApprovedAttribute(id)
-		_, hasUserApprovedAttribute := userHasApprovedAttribute(id)
+		_, hasUserApprovedAttribute, user := userHasApprovedAttribute(id)
 
 		if !hasGroupApprovedAttribute && !hasUserApprovedAttribute {
-			userAttribs := make(map[string][]string)
+			userAttribs := user.Attributes
 			approvedAttrib := []string{"true"}
 			userAttribs["approved"] = approvedAttrib
-			user.Attributes = userAttribs
+			userActivation.Attributes = userAttribs
 		}
 	}
 
-	userJson, _ := json.Marshal(user)
+	userJson, _ := json.Marshal(userActivation)
 
 	err, req, client := tokenhandlers.GetHttpClientAndRequestWithToken(http.MethodPut, url, bytes.NewReader(userJson))
 	if err != nil {
@@ -111,9 +111,9 @@ func userGroupHasApprovedAttribute(id string) (error, bool) {
 	return nil, returnVal
 }
 
-func userHasApprovedAttribute(id string) (error, bool) {
+func userHasApprovedAttribute(id string) (error, bool, types.UserOut) {
 	returnVal := false
-	var users []types.UserOut
+	var users types.UserOut
 
 	// Get User's custom attributes and see if she has approved attribute defined
 	url := types.KEYCLOAK_BACKEND_URL + types.KEYCLOAK_USERS_RESOURCE_URI + "/" + id
@@ -123,40 +123,37 @@ func userHasApprovedAttribute(id string) (error, bool) {
 
 	if err != nil {
 		log.Error().Msg(err.Error())
-		return err, returnVal
+		return err, returnVal, users
 	}
 
 	if client != nil && req != nil {
 		response, err := client.Do(req)
 		if err != nil {
 			log.Error().Msg(err.Error())
-			return err, returnVal
+			return err, returnVal, users
 		}
 
 		if response.StatusCode == http.StatusOK {
 			body, err := ioutil.ReadAll(response.Body)
+			log.Debug().Msg(fmt.Sprintf("%s", body))
 			if err != nil {
 				log.Error().Msg(err.Error())
-				return err, returnVal
+				return err, returnVal, users
 			}
 			err = json.Unmarshal(body, &users)
 			if err != nil {
 				log.Error().Msg(err.Error())
-				return err, returnVal
+				return err, returnVal, users
 			}
+			log.Debug().Msg(fmt.Sprintf("Users found %v", users))
 		}
 	}
 
 	// Iterate over user and see if a custom attribute approved is present
-	if len(users) > 0 {
-		for _, u := range users {
-			if len(u.Attributes) > 0 && u.Attributes["approved"][0] == "true" {
-				returnVal = true
-				log.Debug().Msg("User with Id: " + id + " has approved attribute")
-				break
-			}
-		}
+	if len(users.Attributes) > 0 && len(users.Attributes["approved"]) > 0 && users.Attributes["approved"][0] == "true" {
+		returnVal = true
+		log.Debug().Msg("User with Id: " + id + " has approved attribute")
 	}
 
-	return nil, returnVal
+	return nil, returnVal, users
 }
