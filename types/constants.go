@@ -23,6 +23,9 @@ var (
 	EMAILS_PARAM     = "emails"
 	USER_IDS_PARAM   = "user_ids"
 	ID_PARAM         = "id"
+	ACTIVATE_PARAM   = "activate"
+
+	USER_ATTRIB_APPROVED = "approved"
 
 	ORDER_BY_EMAIL    = "email"
 	ORDER_BY_USERNAME = "username"
