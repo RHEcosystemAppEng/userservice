@@ -31,3 +31,5 @@ out
 bin
 ./userserice-go
 test-results
+*.crt
+*.pem

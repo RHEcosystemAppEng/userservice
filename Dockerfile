@@ -9,24 +9,26 @@ RUN go mod download
 
 # Copy the go source
 COPY main.go main.go
-COPY environment.go environment.go
 COPY rest-server.go rest-server.go
-COPY .env.openshift.local .env
+COPY .env.openshift.dev .env
+COPY signercert.pem signercert.pem
 
 COPY handlers handlers/
 COPY middlewares middlewares/
 COPY routes routes/
 COPY types types/
+COPY env env/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o userservice .
+RUN GOOS=linux GOARCH=amd64 go build -a -o keycloak-user-service .
 
 # Build the operator image
 FROM registry.access.redhat.com/ubi8-minimal:8.7
 
 WORKDIR /
-COPY --from=builder /opt/app-root/src/userservice .
+COPY --from=builder /opt/app-root/src/keycloak-user-service .
+COPY --from=builder /opt/app-root/src/signercert.pem .
 COPY --from=builder /opt/app-root/src/.env .
-USER 65532:65532
 
-ENTRYPOINT ["/userservice"]
+USER 65532:65532
+ENTRYPOINT ["/keycloak-user-service"]

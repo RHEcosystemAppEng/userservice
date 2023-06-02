@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/jarcoal/httpmock"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -12,6 +13,10 @@ import (
 )
 
 func TestGetToken(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setupHttpMockForGetToken()
+
 	r := SetUpRouter()
 	r.POST("/token", tokenroutes.GetTokenWithPasswordGrant)
 

@@ -7,6 +7,30 @@ tags:
   - name: Users
     description: Operations on users
 paths:
+  /user/:id/activate/:activate:
+    put:
+      tags:
+        - Users
+      summary: Activate/ deactivate a user
+      description: Activate/ deactivate a user
+      operationId: activateUser
+      responses:
+        '204':
+          description: A successfully activated/deactivated user operation
+        '401':
+          description: Unauthorized
+        '403':
+          description: Insufficient permissions to list users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '500':
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /users/:
     get:
       tags:

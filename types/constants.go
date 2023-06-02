@@ -11,7 +11,9 @@ var (
 	KEYCLOAK_MASTER_REALM_TOKEN        = ""
 	KEYCLOAK_TOKEN_PATH                = "realms/master/protocol/openid-connect/token"
 	KEYCLOAK_GET_BY_USERNAME_PATH      = "admin/realms/master/users?username="
-	KEYCLOAK_GET_BY_USERS              = "admin/realms/master/users"
+	KEYCLOAK_USERS_RESOURCE_URI        = "admin/realms/master/users"
+	USER_SERVICE_TLS_CRT_PATH          = "./tls.crt"
+	USER_SERVICE_TLS_KEY_PATH          = "./tls.key"
 	USER_SERVICE_PORT                  = ":8000"
 	DISABLE_KEYCLOAK_CERT_VERIFICATION = "false"
 
@@ -20,6 +22,10 @@ var (
 	USER_NAMES_PARAM = "usernames"
 	EMAILS_PARAM     = "emails"
 	USER_IDS_PARAM   = "user_ids"
+	ID_PARAM         = "id"
+	ACTIVATE_PARAM   = "activate"
+
+	USER_ATTRIB_APPROVED = "approved"
 
 	ORDER_BY_EMAIL    = "email"
 	ORDER_BY_USERNAME = "username"

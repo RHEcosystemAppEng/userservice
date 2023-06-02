@@ -1,6 +1,8 @@
 package main
 
+import "userservice-go/env"
+
 func main() {
-	LoadEnvVars()
+	env.LoadEnvVars("./")
 	InitializeAndStartServer()
 }

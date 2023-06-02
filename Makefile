@@ -1,5 +1,5 @@
 ## Adapted from https://gist.github.com/thomaspoignant/5b72d579bd5f311904d973652180c705
-BINARY_NAME=userservice
+BINARY_NAME=keycloak-user-service
 VERSION ?= 0.0.1
 IMG_NAME ?= $(BINARY_NAME):v$(VERSION)
 REGISTRY ?= quay.io
@@ -25,7 +25,7 @@ tests: ## Run the tests of the project
 
 ## Docker:
 docker-build: ## Use the dockerfile to build the container
-	docker build --platform linux/amd64 --tag $(IMAGE_TAG) .
+	docker build --progress=plain --no-cache --platform linux/amd64 --tag $(IMAGE_TAG) .
 
 docker-push: ## push the image
 	docker push $(IMAGE_TAG)
